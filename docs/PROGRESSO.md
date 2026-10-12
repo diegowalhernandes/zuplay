@@ -55,6 +55,8 @@ Jogo da Velha entrou em 12 de outubro de 2026, na categoria Jogos de dois jogado
 
 Jogo da Forca entrou em 12 de outubro de 2026, na categoria Puzzle. A ficha não mostra capa acima do iframe. No Edge, a palavra com cedilha foi acertada, seis erros revelaram a palavra, e Nova palavra começou outra rodada.
 
+Cada palavra do Jogo da Forca mostra uma dica. No Edge, maçã apareceu com a dica Fruta, o acerto continuou valendo, e Nova palavra trocou a dica.
+
 ## Fase 5 — Player
 
 - [ ] Iframe com sandbox, tela cheia, erro e relacionados.

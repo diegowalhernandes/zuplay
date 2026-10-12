@@ -17,7 +17,7 @@
 
       body {
         display: grid;
-        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        grid-template-rows: auto auto auto minmax(0, 1fr) auto;
         gap: 8px;
         box-sizing: border-box;
         padding: 8px;
@@ -54,6 +54,14 @@
         font: 600 14px / 1 "Segoe UI", sans-serif;
         cursor: pointer;
         touch-action: manipulation;
+      }
+
+      #dica {
+        margin: 0;
+        color: #f5b800;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
       }
 
       #palavra {
@@ -143,6 +151,7 @@
       </div>
       <button id="nova" type="button">Nova palavra</button>
     </div>
+    <p id="dica"></p>
     <p id="palavra" aria-label="Palavra"></p>
     <div class="forca">
       <svg viewBox="0 0 160 180" aria-hidden="true">
@@ -189,40 +198,41 @@
     </div>
     <script>
       var palavras = [
-        "maçã",
-        "árvore",
-        "bosque",
-        "estrela",
-        "janela",
-        "escola",
-        "cidade",
-        "nuvem",
-        "ponte",
-        "barco",
-        "livro",
-        "caneta",
-        "praia",
-        "montanha",
-        "relógio",
-        "bicicleta",
-        "pipa",
-        "queijo",
-        "farol",
-        "trilha",
-        "jardim",
-        "chapéu",
-        "cadeira",
-        "sapato",
-        "peixe",
-        "flor",
-        "bola",
-        "mapa",
-        "chave",
-        "rio"
+        { texto: "maçã", dica: "Fruta" },
+        { texto: "árvore", dica: "Planta alta" },
+        { texto: "bosque", dica: "Mato fechado" },
+        { texto: "estrela", dica: "Brilha à noite" },
+        { texto: "janela", dica: "Abertura na parede" },
+        { texto: "escola", dica: "Lugar de aula" },
+        { texto: "cidade", dica: "Muitas ruas" },
+        { texto: "nuvem", dica: "Está no céu" },
+        { texto: "ponte", dica: "Liga duas margens" },
+        { texto: "barco", dica: "Anda na água" },
+        { texto: "livro", dica: "Tem páginas" },
+        { texto: "caneta", dica: "Serve para escrever" },
+        { texto: "praia", dica: "Tem areia" },
+        { texto: "montanha", dica: "Morro bem alto" },
+        { texto: "relógio", dica: "Marca as horas" },
+        { texto: "bicicleta", dica: "Tem pedais" },
+        { texto: "pipa", dica: "Sobe com o vento" },
+        { texto: "queijo", dica: "Feito de leite" },
+        { texto: "farol", dica: "Luz para os navios" },
+        { texto: "trilha", dica: "Caminho no mato" },
+        { texto: "jardim", dica: "Tem flores" },
+        { texto: "chapéu", dica: "Fica na cabeça" },
+        { texto: "cadeira", dica: "Serve para sentar" },
+        { texto: "sapato", dica: "Calçado" },
+        { texto: "peixe", dica: "Vive na água" },
+        { texto: "flor", dica: "Tem pétalas" },
+        { texto: "bola", dica: "Quica" },
+        { texto: "mapa", dica: "Mostra caminhos" },
+        { texto: "chave", dica: "Abre a fechadura" },
+        { texto: "rio", dica: "Água que corre" }
       ];
       var aviso = document.getElementById("aviso");
       var placar = document.getElementById("placar");
       var caixa = document.getElementById("palavra");
+      var linhaDica = document.getElementById("dica");
       var teclas = Array.prototype.slice.call(document.querySelectorAll("[data-letra]"));
       var partes = Array.prototype.slice.call(document.querySelectorAll("[data-parte]"));
       var palavraAtual = "";
@@ -275,8 +285,19 @@
         }
       }
 
+      function itemDaPalavra(forcada) {
+        if (!forcada) return palavras[Math.floor(Math.random() * palavras.length)];
+        for (var i = 0; i < palavras.length; i += 1) {
+          if (palavras[i].texto === forcada) return palavras[i];
+        }
+        return { texto: forcada, dica: "" };
+      }
+
       function comecar(forcada) {
-        palavraAtual = forcada || palavras[Math.floor(Math.random() * palavras.length)];
+        var item = itemDaPalavra(forcada);
+        palavraAtual = item.texto;
+        linhaDica.hidden = item.dica === "";
+        linhaDica.textContent = item.dica ? "Dica: " + item.dica : "";
         usadas = {};
         erros = 0;
         fim = false;
