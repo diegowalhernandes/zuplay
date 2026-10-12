@@ -2,7 +2,7 @@
 
 Estado: **Fase 4 concluída em 12 de outubro de 2026. Aguardando aprovação para a Fase 5.**
 
-Corrida do Bosque está publicado e abre no iframe. O botão de tela cheia fica para a fase seguinte.
+Corrida do Bosque e Jogo da Velha estão publicados e abrem no iframe. O restante da Fase 5 segue pendente.
 
 ## Fase 0 — Planejamento e documentação
 
@@ -50,6 +50,8 @@ O clique em “Sombra no Beco” abriu `/categorias/acao/` com esse título. Nen
 O placar do jogo passou de zero sozinho e o iframe não deixa a página ler o documento interno. As outras faixas da home continuam como demonstração.
 
 A capa desenhada foi retirada da ficha. O botão Tela cheia fica acima do jogo e, no celular, ocupa a largura da tela. O restante da Fase 5 segue pendente.
+
+Jogo da Velha entrou em 12 de outubro de 2026, na categoria Jogos de dois jogadores. A ficha não mostra capa acima do iframe. A vitória do X, o empate e o recomeço foram conferidos no Edge.
 
 ## Fase 5 — Player
 

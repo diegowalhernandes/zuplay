@@ -32,5 +32,39 @@
       "validUntil": "",
       "verified": true
     }
+  },
+  {
+    "title": "Jogo da Velha",
+    "slug": "jogo-da-velha",
+    "shortDescription": "Marque três casas em linha, no mesmo aparelho.",
+    "description": "Jogo da Velha é um jogo original do Zuplay para duas pessoas no mesmo aparelho. O tabuleiro tem nove casas. Uma pessoa marca com X e a outra com O, em turnos. Dá para jogar no computador ou no celular, sem instalar nada e sem criar conta. Quem completar uma linha, uma coluna ou uma diagonal vence a partida. Se as nove casas encherem sem uma linha completa, a partida termina empatada. O placar da sessão mostra as vitórias de cada lado e os empates, e zera quando a página é recarregada. As marcas, o tabuleiro e as cores foram feitos para este portal e não vêm de outro catálogo.",
+    "instructions": "Duas pessoas usam o mesmo aparelho. Toque numa casa vazia para marcar. X começa. Depois de vencer ou empatar, toque em Jogar de novo.",
+    "controls": "Toque ou clique numa casa vazia. No teclado, use Tab e Enter nas casas. Jogar de novo recomeça a partida.",
+    "mobileCompatible": true,
+    "status": "published",
+    "publishedAt": "2026-10-12",
+    "category": "dois-jogadores",
+    "tags": ["tabuleiro", "turnos"],
+    "developer": "Zuplay",
+    "embed": { "mode": "hosted", "path": "play/index.html" },
+    "thumbnail": "/assets/games/jogo-da-velha/thumb.png",
+    "cover": "/assets/games/jogo-da-velha/cover.png",
+    "coverAlt": "Tabuleiro com um X amarelo e um O azul",
+    "seoTitle": "Jogo da Velha",
+    "seoDescription": "Marque três casas em linha com outra pessoa, no mesmo navegador.",
+    "playCount": 0,
+    "childDirected": false,
+    "homepage": { "featured": true, "recommended": false },
+    "license": {
+      "sourceType": "original",
+      "rightsHolder": "Zuplay",
+      "licenseName": "Uso próprio no portal",
+      "licenseUrl": "",
+      "allowsEmbedding": true,
+      "attributionRequired": false,
+      "attributionText": "",
+      "validUntil": "",
+      "verified": true
+    }
   }
 ]

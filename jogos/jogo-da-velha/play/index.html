@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Jogo da Velha</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1c1430;
+        color: #f4f1fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 8px;
+        box-sizing: border-box;
+        padding: 8px;
+      }
+
+      .topo {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .topo p {
+        margin: 0;
+      }
+
+      #status {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      #placar {
+        color: #b7aec9;
+        font-size: 14px;
+      }
+
+      .mesa {
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #tabuleiro {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        height: 100%;
+        width: auto;
+        max-width: 100%;
+        aspect-ratio: 1;
+        container-type: inline-size;
+      }
+
+      .casa {
+        border: 0;
+        border-radius: 12px;
+        background: #2a2140;
+        color: #f4f1fb;
+        font: 700 22cqi / 1 "Segoe UI", sans-serif;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      .casa--x {
+        color: #f5b800;
+      }
+
+      .casa--o {
+        color: #93c5fd;
+      }
+
+      .casa--vence {
+        background: #4c1d95;
+      }
+
+      .casa:disabled {
+        cursor: default;
+      }
+
+      #de-novo {
+        flex: none;
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 14px;
+        background: #c4b5fd;
+        color: #1c1430;
+        font: 600 14px / 1 "Segoe UI", sans-serif;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topo">
+      <div>
+        <p id="status" aria-live="polite">Vez do X</p>
+        <p id="placar">X 0 · O 0 · Empates 0</p>
+      </div>
+      <button id="de-novo" type="button">Jogar de novo</button>
+    </div>
+    <div class="mesa">
+    <div id="tabuleiro" role="group" aria-label="Tabuleiro">
+      <button class="casa" type="button" data-casa="0" aria-label="Casa 1"></button>
+      <button class="casa" type="button" data-casa="1" aria-label="Casa 2"></button>
+      <button class="casa" type="button" data-casa="2" aria-label="Casa 3"></button>
+      <button class="casa" type="button" data-casa="3" aria-label="Casa 4"></button>
+      <button class="casa" type="button" data-casa="4" aria-label="Casa 5"></button>
+      <button class="casa" type="button" data-casa="5" aria-label="Casa 6"></button>
+      <button class="casa" type="button" data-casa="6" aria-label="Casa 7"></button>
+      <button class="casa" type="button" data-casa="7" aria-label="Casa 8"></button>
+      <button class="casa" type="button" data-casa="8" aria-label="Casa 9"></button>
+    </div>
+    </div>
+    <script>
+      var casas = Array.prototype.slice.call(document.querySelectorAll("[data-casa]"));
+      var aviso = document.getElementById("status");
+      var placar = document.getElementById("placar");
+      var deNovo = document.getElementById("de-novo");
+      var grade = ["", "", "", "", "", "", "", "", ""];
+      var vez = "X";
+      var fim = false;
+      var vitorias = { X: 0, O: 0, empate: 0 };
+      var linhas = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+
+      function atualizarPlacar() {
+        placar.textContent = "X " + vitorias.X + " · O " + vitorias.O + " · Empates " + vitorias.empate;
+      }
+
+      function vencedor() {
+        for (var i = 0; i < linhas.length; i += 1) {
+          var linha = linhas[i];
+          var marca = grade[linha[0]];
+          if (marca && marca === grade[linha[1]] && marca === grade[linha[2]]) {
+            return { marca: marca, casas: linha };
+          }
+        }
+        return null;
+      }
+
+      function cheia() {
+        return grade.every(function (casa) {
+          return casa !== "";
+        });
+      }
+
+      function marcar(indice) {
+        var botao = casas[indice];
+        botao.textContent = grade[indice];
+        botao.disabled = true;
+        botao.className = grade[indice] === "X" ? "casa casa--x" : "casa casa--o";
+        botao.setAttribute("aria-label", "Casa " + (indice + 1) + ", " + grade[indice]);
+      }
+
+      function jogar(indice) {
+        if (fim || grade[indice]) return;
+        grade[indice] = vez;
+        marcar(indice);
+        var ganhou = vencedor();
+        if (ganhou) {
+          fim = true;
+          vitorias[ganhou.marca] += 1;
+          ganhou.casas.forEach(function (casa) {
+            casas[casa].classList.add("casa--vence");
+          });
+          casas.forEach(function (botao) {
+            botao.disabled = true;
+          });
+          aviso.textContent = ganhou.marca + " venceu";
+          atualizarPlacar();
+          return;
+        }
+        if (cheia()) {
+          fim = true;
+          vitorias.empate += 1;
+          aviso.textContent = "Empate";
+          atualizarPlacar();
+          return;
+        }
+        vez = vez === "X" ? "O" : "X";
+        aviso.textContent = "Vez do " + vez;
+      }
+
+      function recomecar() {
+        grade = ["", "", "", "", "", "", "", "", ""];
+        vez = "X";
+        fim = false;
+        casas.forEach(function (botao, indice) {
+          botao.textContent = "";
+          botao.disabled = false;
+          botao.className = "casa";
+          botao.setAttribute("aria-label", "Casa " + (indice + 1));
+        });
+        aviso.textContent = "Vez do X";
+        casas[0].focus();
+      }
+
+      casas.forEach(function (botao) {
+        botao.addEventListener("click", function () {
+          jogar(Number(botao.getAttribute("data-casa")));
+        });
+      });
+
+      deNovo.addEventListener("click", recomecar);
+      atualizarPlacar();
+    </script>
+  </body>
+</html>

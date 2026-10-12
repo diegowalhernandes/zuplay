@@ -379,6 +379,11 @@ img.game-card__media {
   aspect-ratio: 16 / 9;
 }
 
+.player--alto {
+  aspect-ratio: 1;
+  max-height: 72vh;
+}
+
 .player-wrap:fullscreen,
 .player-wrap:-webkit-full-screen {
   display: flex;

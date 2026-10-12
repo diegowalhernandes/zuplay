@@ -6,4 +6,7 @@
   <url>
     <loc>https://zuplay.example/jogos/corrida-do-bosque/</loc>
   </url>
+  <url>
+    <loc>https://zuplay.example/jogos/jogo-da-velha/</loc>
+  </url>
 </urlset>
