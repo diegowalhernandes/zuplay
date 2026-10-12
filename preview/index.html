@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Componentes | Zuplay</title>
+    <script src="../js/theme.js"></script>
+    <link rel="stylesheet" href="../css/site.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <a class="logo" href="/">Zuplay</a>
+        <form class="search-form" role="search" action="/busca/" method="get">
+          <label class="visually-hidden" for="busca">Buscar jogos</label>
+          <input class="search-input" id="busca" name="q" type="search" placeholder="Buscar jogos" maxlength="80" enterkeyhint="search">
+        </form>
+        <button class="button button--ghost theme-toggle" type="button" aria-pressed="false">Tema escuro</button>
+      </div>
+      <nav class="category-nav" aria-label="Categorias">
+        <div class="container">
+          <ul class="category-nav__list">
+            <li><a href="/categorias/acao/">Ação</a></li>
+            <li><a href="/categorias/aventura/">Aventura</a></li>
+            <li><a href="/categorias/corrida/">Corrida</a></li>
+            <li><a href="/categorias/esportes/">Esportes</a></li>
+            <li><a href="/categorias/puzzle/">Puzzle</a></li>
+            <li><a href="/categorias/estrategia/">Estratégia</a></li>
+            <li><a href="/categorias/multiplayer/">Multiplayer</a></li>
+            <li><a href="/categorias/arcade/">Arcade</a></li>
+            <li><a href="/categorias/educativos/">Educativos</a></li>
+            <li><a href="/categorias/dois-jogadores/">Jogos de dois jogadores</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <main id="conteudo" class="container page">
+      <h1>Componentes</h1>
+      <p class="section__intro">Amostras visuais do Zuplay. Os jogos abaixo são demonstração e não estão publicados.</p>
+
+      <section class="section" id="amostras" aria-labelledby="titulo-amostras">
+        <h2 id="titulo-amostras">Cards</h2>
+        <div class="game-grid">
+          <article class="game-card">
+            <a class="game-card__link" href="#amostras">
+              <span class="game-card__media game-card__media--bosque" aria-hidden="true"></span>
+              <span class="game-card__body">
+                <span class="badge">Demonstração</span>
+                <span class="game-card__title">Corrida do Bosque</span>
+                <span class="game-card__category">Corrida</span>
+              </span>
+            </a>
+          </article>
+          <article class="game-card">
+            <a class="game-card__link" href="#amostras">
+              <span class="game-card__media game-card__media--farol" aria-hidden="true"></span>
+              <span class="game-card__body">
+                <span class="badge">Demonstração</span>
+                <span class="game-card__title">Trilha do Farol</span>
+                <span class="game-card__category">Aventura</span>
+              </span>
+            </a>
+          </article>
+          <article class="game-card">
+            <a class="game-card__link" href="#amostras">
+              <span class="game-card__media game-card__media--cais" aria-hidden="true"></span>
+              <span class="game-card__body">
+                <span class="badge">Demonstração</span>
+                <span class="game-card__title">Peças do Cais</span>
+                <span class="game-card__category">Puzzle</span>
+              </span>
+            </a>
+          </article>
+          <article class="game-card">
+            <a class="game-card__link" href="#amostras">
+              <span class="game-card__media game-card__media--gol" aria-hidden="true"></span>
+              <span class="game-card__body">
+                <span class="badge">Demonstração</span>
+                <span class="game-card__title">Gol de Quintal</span>
+                <span class="game-card__category">Esportes</span>
+              </span>
+            </a>
+          </article>
+          <article class="game-card">
+            <a class="game-card__link" href="#amostras">
+              <span class="game-card__media game-card__media--torre" aria-hidden="true"></span>
+              <span class="game-card__body">
+                <span class="badge">Demonstração</span>
+                <span class="game-card__title">Torre de Nuvens</span>
+                <span class="game-card__category">Estratégia</span>
+              </span>
+            </a>
+          </article>
+          <article class="game-card">
+            <a class="game-card__link" href="#amostras">
+              <span class="game-card__media game-card__media--salao" aria-hidden="true"></span>
+              <span class="game-card__body">
+                <span class="badge">Demonstração</span>
+                <span class="game-card__title">Salão de Fichas</span>
+                <span class="game-card__category">Arcade</span>
+              </span>
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="titulo-botoes">
+        <h2 id="titulo-botoes">Botões</h2>
+        <div class="button-row">
+          <a class="button" href="#amostras">Jogar</a>
+          <button class="button button--secondary" type="button">Secundário</button>
+          <a class="button button--ghost" href="/">Fantasma</a>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="titulo-esqueleto">
+        <h2 id="titulo-esqueleto">Carregando</h2>
+        <div class="game-grid" aria-hidden="true">
+          <div class="skeleton">
+            <span class="skeleton__media"></span>
+            <span class="skeleton__line"></span>
+            <span class="skeleton__line skeleton__line--short"></span>
+          </div>
+          <div class="skeleton">
+            <span class="skeleton__media"></span>
+            <span class="skeleton__line"></span>
+            <span class="skeleton__line skeleton__line--short"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="estado-vazio" aria-labelledby="titulo-vazio">
+        <h2 id="titulo-vazio">Estado vazio</h2>
+        <div class="empty-state">
+          <p>Nenhum jogo encontrado.</p>
+          <a class="button" href="/">Voltar ao início</a>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="titulo-erro">
+        <h2 id="titulo-erro">Estado de erro</h2>
+        <div class="error-state" role="alert">
+          <p>Não foi possível carregar os jogos.</p>
+          <button class="button" type="button" data-retry>Tentar de novo</button>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p>Jogos gratuitos no navegador, sem instalar.</p>
+        <nav aria-label="Institucional">
+          <ul class="site-footer__nav">
+            <li><a href="/sobre/">Sobre</a></li>
+            <li><a href="/contato/">Contato</a></li>
+            <li><a href="/privacidade/">Privacidade</a></li>
+            <li><a href="/termos/">Termos</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+    <script src="../js/site.js"></script>
+  </body>
+</html>
