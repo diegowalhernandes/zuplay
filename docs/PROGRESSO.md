@@ -49,6 +49,8 @@ O clique em “Sombra no Beco” abriu `/categorias/acao/` com esse título. Nen
 
 O placar do jogo passou de zero sozinho e o iframe não deixa a página ler o documento interno. As outras faixas da home continuam como demonstração.
 
+A capa desenhada foi retirada da ficha. O botão Tela cheia fica acima do jogo e, no celular, ocupa a largura da tela. O restante da Fase 5 segue pendente.
+
 ## Fase 5 — Player
 
 - [ ] Iframe com sandbox, tela cheia, erro e relacionados.

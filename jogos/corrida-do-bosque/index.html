@@ -39,15 +39,18 @@
     <main id="conteudo" class="container page">
       <h1>Corrida do Bosque</h1>
       <p class="section__intro">Desvie das árvores e fique o máximo possível na trilha.</p>
-      <img class="cover" src="/assets/games/corrida-do-bosque/cover.png" alt="Carro claro numa trilha entre árvores" width="1280" height="720">
-      <div class="player">
-        <iframe
-          src="play/index.html"
-          title="Corrida do Bosque"
-          sandbox="allow-scripts allow-pointer-lock"
-          allow="fullscreen"
-          referrerpolicy="no-referrer"
-        ></iframe>
+      <div class="player-wrap">
+        <button class="button player__fullscreen" type="button">Tela cheia</button>
+        <div class="player">
+          <iframe
+            src="play/index.html"
+            title="Corrida do Bosque"
+            sandbox="allow-scripts allow-pointer-lock"
+            allow="fullscreen"
+            allowfullscreen
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </div>
       </div>
       <div class="game-copy">
         <h2>Como jogar</h2>

@@ -24,3 +24,33 @@ document.querySelectorAll("[data-retry]").forEach(function (button) {
     window.location.reload();
   });
 });
+
+var playerWrap = document.querySelector(".player-wrap");
+var fullscreenButton = document.querySelector(".player__fullscreen");
+
+if (playerWrap && fullscreenButton) {
+  var fullscreenElement = function () {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  };
+
+  var updateFullscreenLabel = function () {
+    var active = fullscreenElement() === playerWrap;
+    fullscreenButton.textContent = active ? "Sair da tela cheia" : "Tela cheia";
+    fullscreenButton.setAttribute("aria-pressed", active ? "true" : "false");
+  };
+
+  fullscreenButton.addEventListener("click", function () {
+    if (fullscreenElement() === playerWrap) {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) exit.call(document);
+      return;
+    }
+
+    var request = playerWrap.requestFullscreen || playerWrap.webkitRequestFullscreen;
+    if (request) request.call(playerWrap);
+  });
+
+  document.addEventListener("fullscreenchange", updateFullscreenLabel);
+  document.addEventListener("webkitfullscreenchange", updateFullscreenLabel);
+  updateFullscreenLabel();
+}
