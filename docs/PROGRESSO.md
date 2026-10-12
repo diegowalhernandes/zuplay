@@ -2,7 +2,7 @@
 
 Estado: **Fase 4 concluída em 12 de outubro de 2026. Aguardando aprovação para a Fase 5.**
 
-Corrida do Bosque e Jogo da Velha estão publicados e abrem no iframe. O restante da Fase 5 segue pendente.
+Corrida do Bosque, Jogo da Velha e Jogo da Forca estão publicados e abrem no iframe. O restante da Fase 5 segue pendente.
 
 ## Fase 0 — Planejamento e documentação
 
@@ -52,6 +52,8 @@ O placar do jogo passou de zero sozinho e o iframe não deixa a página ler o do
 A capa desenhada foi retirada da ficha. O botão Tela cheia fica acima do jogo e, no celular, ocupa a largura da tela. O restante da Fase 5 segue pendente.
 
 Jogo da Velha entrou em 12 de outubro de 2026, na categoria Jogos de dois jogadores. A ficha não mostra capa acima do iframe. A vitória do X, o empate e o recomeço foram conferidos no Edge.
+
+Jogo da Forca entrou em 12 de outubro de 2026, na categoria Puzzle. A ficha não mostra capa acima do iframe. No Edge, a palavra com cedilha foi acertada, seis erros revelaram a palavra, e Nova palavra começou outra rodada.
 
 ## Fase 5 — Player
 

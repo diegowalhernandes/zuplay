@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Jogo da Forca</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1c1430;
+        color: #f4f1fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        display: grid;
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        gap: 8px;
+        box-sizing: border-box;
+        padding: 8px;
+      }
+
+      .topo {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .topo p {
+        margin: 0;
+      }
+
+      #aviso {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      #placar {
+        color: #b7aec9;
+        font-size: 14px;
+      }
+
+      #nova {
+        flex: none;
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 14px;
+        background: #c4b5fd;
+        color: #1c1430;
+        font: 600 14px / 1 "Segoe UI", sans-serif;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      #palavra {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+        gap: 6px;
+        min-height: 32px;
+        margin: 0;
+      }
+
+      .letra {
+        min-width: 22px;
+        border-bottom: 3px solid #f4f1fb;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .forca {
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .forca svg {
+        height: 100%;
+        width: auto;
+        max-width: 100%;
+      }
+
+      .trave,
+      .parte {
+        fill: none;
+        stroke: #f5b800;
+        stroke-width: 4;
+        stroke-linecap: round;
+      }
+
+      .parte {
+        opacity: 0;
+      }
+
+      .parte.visivel {
+        opacity: 1;
+      }
+
+      .teclado {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .tecla {
+        border: 0;
+        border-radius: 8px;
+        background: #2a2140;
+        color: #f4f1fb;
+        font: 700 15px / 1 "Segoe UI", sans-serif;
+        min-height: 34px;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      .tecla--certa {
+        background: #1f7a3a;
+      }
+
+      .tecla--errada {
+        background: #3a2a40;
+        color: #b7aec9;
+      }
+
+      .tecla:disabled {
+        cursor: default;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topo">
+      <div>
+        <p id="aviso" aria-live="polite">Escolha uma letra</p>
+        <p id="placar">Acertos 0 · Erros 0</p>
+      </div>
+      <button id="nova" type="button">Nova palavra</button>
+    </div>
+    <p id="palavra" aria-label="Palavra"></p>
+    <div class="forca">
+      <svg viewBox="0 0 160 180" aria-hidden="true">
+        <line class="trave" x1="20" y1="170" x2="108" y2="170"></line>
+        <line class="trave" x1="40" y1="170" x2="40" y2="16"></line>
+        <line class="trave" x1="40" y1="16" x2="104" y2="16"></line>
+        <line class="trave" x1="104" y1="16" x2="104" y2="36"></line>
+        <circle class="parte" data-parte="0" cx="104" cy="54" r="16"></circle>
+        <line class="parte" data-parte="1" x1="104" y1="70" x2="104" y2="112"></line>
+        <line class="parte" data-parte="2" x1="104" y1="82" x2="78" y2="100"></line>
+        <line class="parte" data-parte="3" x1="104" y1="82" x2="130" y2="100"></line>
+        <line class="parte" data-parte="4" x1="104" y1="112" x2="82" y2="148"></line>
+        <line class="parte" data-parte="5" x1="104" y1="112" x2="126" y2="148"></line>
+      </svg>
+    </div>
+    <div class="teclado" role="group" aria-label="Letras">
+      <button class="tecla" type="button" data-letra="A">A</button>
+      <button class="tecla" type="button" data-letra="B">B</button>
+      <button class="tecla" type="button" data-letra="C">C</button>
+      <button class="tecla" type="button" data-letra="D">D</button>
+      <button class="tecla" type="button" data-letra="E">E</button>
+      <button class="tecla" type="button" data-letra="F">F</button>
+      <button class="tecla" type="button" data-letra="G">G</button>
+      <button class="tecla" type="button" data-letra="H">H</button>
+      <button class="tecla" type="button" data-letra="I">I</button>
+      <button class="tecla" type="button" data-letra="J">J</button>
+      <button class="tecla" type="button" data-letra="K">K</button>
+      <button class="tecla" type="button" data-letra="L">L</button>
+      <button class="tecla" type="button" data-letra="M">M</button>
+      <button class="tecla" type="button" data-letra="N">N</button>
+      <button class="tecla" type="button" data-letra="O">O</button>
+      <button class="tecla" type="button" data-letra="P">P</button>
+      <button class="tecla" type="button" data-letra="Q">Q</button>
+      <button class="tecla" type="button" data-letra="R">R</button>
+      <button class="tecla" type="button" data-letra="S">S</button>
+      <button class="tecla" type="button" data-letra="T">T</button>
+      <button class="tecla" type="button" data-letra="U">U</button>
+      <button class="tecla" type="button" data-letra="V">V</button>
+      <button class="tecla" type="button" data-letra="W">W</button>
+      <button class="tecla" type="button" data-letra="X">X</button>
+      <button class="tecla" type="button" data-letra="Y">Y</button>
+      <button class="tecla" type="button" data-letra="Z">Z</button>
+      <button class="tecla" type="button" data-letra="Ç">Ç</button>
+    </div>
+    <script>
+      var palavras = [
+        "maçã",
+        "árvore",
+        "bosque",
+        "estrela",
+        "janela",
+        "escola",
+        "cidade",
+        "nuvem",
+        "ponte",
+        "barco",
+        "livro",
+        "caneta",
+        "praia",
+        "montanha",
+        "relógio",
+        "bicicleta",
+        "pipa",
+        "queijo",
+        "farol",
+        "trilha",
+        "jardim",
+        "chapéu",
+        "cadeira",
+        "sapato",
+        "peixe",
+        "flor",
+        "bola",
+        "mapa",
+        "chave",
+        "rio"
+      ];
+      var aviso = document.getElementById("aviso");
+      var placar = document.getElementById("placar");
+      var caixa = document.getElementById("palavra");
+      var teclas = Array.prototype.slice.call(document.querySelectorAll("[data-letra]"));
+      var partes = Array.prototype.slice.call(document.querySelectorAll("[data-parte]"));
+      var palavraAtual = "";
+      var usadas = {};
+      var erros = 0;
+      var fim = false;
+      var rodadas = { acertos: 0, erros: 0 };
+      var maxErros = 6;
+
+      function semAcento(letra) {
+        var maiuscula = String(letra).toUpperCase();
+        if (maiuscula === "Ç") return "Ç";
+        return maiuscula.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      }
+
+      function atualizarPlacar() {
+        placar.textContent = "Acertos " + rodadas.acertos + " · Erros " + rodadas.erros;
+      }
+
+      function revelar(mostrarTudo) {
+        Array.prototype.forEach.call(caixa.children, function (span, indice) {
+          var caractere = palavraAtual.charAt(indice);
+          if (mostrarTudo || usadas[semAcento(caractere)]) {
+            span.textContent = caractere.toUpperCase();
+          } else {
+            span.textContent = "";
+          }
+        });
+      }
+
+      function completa() {
+        for (var i = 0; i < palavraAtual.length; i += 1) {
+          if (!usadas[semAcento(palavraAtual.charAt(i))]) return false;
+        }
+        return true;
+      }
+
+      function travar() {
+        teclas.forEach(function (tecla) {
+          tecla.disabled = true;
+        });
+      }
+
+      function montarPalavra() {
+        caixa.textContent = "";
+        for (var i = 0; i < palavraAtual.length; i += 1) {
+          var span = document.createElement("span");
+          span.className = "letra";
+          caixa.appendChild(span);
+        }
+      }
+
+      function comecar(forcada) {
+        palavraAtual = forcada || palavras[Math.floor(Math.random() * palavras.length)];
+        usadas = {};
+        erros = 0;
+        fim = false;
+        montarPalavra();
+        teclas.forEach(function (tecla) {
+          tecla.disabled = false;
+          tecla.className = "tecla";
+        });
+        partes.forEach(function (parte) {
+          parte.classList.remove("visivel");
+        });
+        aviso.textContent = "Escolha uma letra";
+      }
+
+      function tentar(letra) {
+        if (fim) return;
+        letra = semAcento(letra);
+        if (!/^[A-ZÇ]$/.test(letra)) return;
+        if (usadas[letra]) return;
+        usadas[letra] = true;
+        var tecla = document.querySelector('[data-letra="' + letra + '"]');
+        var tem = false;
+        for (var i = 0; i < palavraAtual.length; i += 1) {
+          if (semAcento(palavraAtual.charAt(i)) === letra) tem = true;
+        }
+        if (tecla) {
+          tecla.disabled = true;
+          tecla.classList.add(tem ? "tecla--certa" : "tecla--errada");
+        }
+        if (tem) {
+          revelar(false);
+          if (completa()) {
+            fim = true;
+            rodadas.acertos += 1;
+            aviso.textContent = "Acertou";
+            travar();
+            atualizarPlacar();
+          }
+          return;
+        }
+        erros += 1;
+        if (partes[erros - 1]) partes[erros - 1].classList.add("visivel");
+        if (erros >= maxErros) {
+          fim = true;
+          rodadas.erros += 1;
+          revelar(true);
+          aviso.textContent = "A palavra era " + palavraAtual.toUpperCase();
+          travar();
+          atualizarPlacar();
+        }
+      }
+
+      teclas.forEach(function (tecla) {
+        tecla.addEventListener("click", function () {
+          tentar(tecla.getAttribute("data-letra"));
+        });
+      });
+
+      document.addEventListener("keydown", function (evento) {
+        if (evento.ctrlKey || evento.altKey || evento.metaKey) return;
+        tentar(evento.key);
+      });
+
+      document.getElementById("nova").addEventListener("click", function () {
+        comecar();
+      });
+
+      atualizarPlacar();
+      comecar();
+    </script>
+  </body>
+</html>
