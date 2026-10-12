@@ -6,7 +6,7 @@ Cada jogo entra numa página do próprio site, com texto, capa e anúncio. O jog
 
 ## Estado
 
-Fase 2 concluída em 12 de outubro de 2026: cabeçalho, categorias, cards e estados visuais. A home ainda não lista jogos. A pré-visualização fica em `/preview/`.
+Fase 4 concluída em 12 de outubro de 2026: Corrida do Bosque é o primeiro jogo jogável, em `/jogos/corrida-do-bosque/`. A pré-visualização dos componentes fica em `/preview/`.
 
 Código em [github.com/diegowalhernandes/zuplay](https://github.com/diegowalhernandes/zuplay). Andamento em [docs/PROGRESSO.md](docs/PROGRESSO.md). Regras permanentes: [AGENTS.md](AGENTS.md).
 

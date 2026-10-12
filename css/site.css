@@ -157,6 +157,10 @@ main {
   font-size: 1.125rem;
 }
 
+.hero .section__intro {
+  margin-top: 8px;
+}
+
 .section {
   margin-top: 32px;
 }
@@ -352,6 +356,49 @@ main {
   aspect-ratio: 16 / 9;
 }
 
+img.game-card__media {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 16px 0;
+  border-radius: 16px;
+}
+
+.player {
+  margin: 0 0 8px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #1c1430;
+  aspect-ratio: 16 / 9;
+}
+
+.player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.game-copy {
+  display: grid;
+  gap: 12px;
+  max-width: 70ch;
+}
+
+.game-copy h2 {
+  margin-top: 12px;
+}
+
+.game-copy a {
+  color: var(--primary);
+}
+
 .game-card__media--bosque {
   background: linear-gradient(145deg, #5b21b6, #1d4ed8 55%, #f5b800);
 }
@@ -374,6 +421,22 @@ main {
 
 .game-card__media--salao {
   background: linear-gradient(145deg, #5b21b6, #f5b800 70%, #1d4ed8);
+}
+
+.game-card__media--sombra {
+  background: linear-gradient(160deg, #1c1430, #5b21b6 60%, #1d4ed8);
+}
+
+.game-card__media--duelo {
+  background: linear-gradient(90deg, #5b21b6 50%, #f5b800 50%);
+}
+
+.game-card__media--mapa {
+  background: linear-gradient(145deg, #1d4ed8, #f5b800);
+}
+
+.game-card__media--sala {
+  background: linear-gradient(180deg, #1d4ed8, #4c1d95);
 }
 
 .game-card__body {

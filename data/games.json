@@ -1,0 +1,36 @@
+[
+  {
+    "title": "Corrida do Bosque",
+    "slug": "corrida-do-bosque",
+    "shortDescription": "Desvie das árvores e fique o máximo possível na trilha.",
+    "description": "Corrida do Bosque é um jogo original do Zuplay. Você conduz um carro claro por uma trilha estreita entre as árvores. A pista desce sem parar e os troncos surgem em faixas diferentes. A meta é permanecer na trilha o maior tempo possível. Cada segundo sem bater aumenta a pontuação. Se o carro encosta numa árvore, a corrida acaba e pode recomeçar na hora. Tudo acontece no navegador, no computador ou no celular, sem instalar nada e sem criar conta. O carro, a trilha e as árvores foram feitos para este portal e não vêm de outro catálogo.",
+    "instructions": "Use as setas ou as teclas A e D para mudar de faixa. No celular, toque no lado esquerdo ou direito da pista. Depois de bater, pressione espaço ou toque de novo para recomeçar.",
+    "controls": "Teclado: setas, A e D. Toque: lado esquerdo e lado direito da área do jogo. Espaço ou um toque recomeça depois da batida.",
+    "mobileCompatible": true,
+    "status": "published",
+    "publishedAt": "2026-10-12",
+    "category": "corrida",
+    "tags": ["desviar", "um-toque"],
+    "developer": "Zuplay",
+    "embed": { "mode": "hosted", "path": "play/index.html" },
+    "thumbnail": "/assets/games/corrida-do-bosque/thumb.png",
+    "cover": "/assets/games/corrida-do-bosque/cover.png",
+    "coverAlt": "Carro claro numa trilha entre árvores",
+    "seoTitle": "Corrida do Bosque",
+    "seoDescription": "Desvie das árvores neste jogo de corrida grátis no navegador.",
+    "playCount": 0,
+    "childDirected": false,
+    "homepage": { "featured": true, "recommended": true },
+    "license": {
+      "sourceType": "original",
+      "rightsHolder": "Zuplay",
+      "licenseName": "Uso próprio no portal",
+      "licenseUrl": "",
+      "allowsEmbedding": true,
+      "attributionRequired": false,
+      "attributionText": "",
+      "validUntil": "",
+      "verified": true
+    }
+  }
+]

@@ -1,8 +1,8 @@
 # Progresso
 
-Estado: **Fase 2 concluída em 12 de outubro de 2026. Aguardando aprovação para a Fase 3.**
+Estado: **Fase 4 concluída em 12 de outubro de 2026. Aguardando aprovação para a Fase 5.**
 
-O visual do portal está no ar localmente. A home ainda não lista jogos.
+Corrida do Bosque está publicado e abre no iframe. O botão de tela cheia fica para a fase seguinte.
 
 ## Fase 0 — Planejamento e documentação
 
@@ -34,11 +34,20 @@ As categorias abrem uma página vazia com `noindex`, para a navegação não cai
 
 ## Fase 3 — Home
 
-- [ ] Faixas com exemplos fictícios. As rotas de categoria já existem, vazias, desde a Fase 2.
+- [x] Faixas Destaques, Populares, Adicionados recentemente, Recomendados e Mais jogados, com cards fictícios marcados como demonstração.
+- [x] Cada card abre a categoria correspondente, que mostra a mesma amostra.
+- [x] A grade está no HTML. Conferida no Edge em 1280 px e em 390 px.
+
+O clique em “Sombra no Beco” abriu `/categorias/acao/` com esse título. Nenhuma arte ou jogo de terceiro entrou.
 
 ## Fase 4 — Catálogo e ficha
 
-- [ ] JSON, um jogo original mínimo, ficha e categoria.
+- [x] `data/categories.json` e `data/games.json`, com licença verificada em Corrida do Bosque.
+- [x] Jogo original em `jogos/corrida-do-bosque/play/index.html`.
+- [x] Ficha com texto, capa e iframe em sandbox. A categoria Corrida aponta para ela.
+- [x] URL publicada em `sitemap.xml`. Conferida no Edge em 1280 px e em 390 px.
+
+O placar do jogo passou de zero sozinho e o iframe não deixa a página ler o documento interno. As outras faixas da home continuam como demonstração.
 
 ## Fase 5 — Player
 

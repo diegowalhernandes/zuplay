@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Ação",
+    "slug": "acao",
+    "description": "Jogos rápidos de reflexo, desvio e perseguição, jogados direto no navegador.",
+    "seoTitle": "Jogos de ação grátis",
+    "seoDescription": "Jogue ação no navegador, sem instalar.",
+    "sortOrder": 10,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Aventura",
+    "slug": "aventura",
+    "description": "Percursos, exploração e desafios em cenários próprios do Zuplay.",
+    "seoTitle": "Jogos de aventura grátis",
+    "seoDescription": "Aventuras curtas para jogar no navegador.",
+    "sortOrder": 20,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Corrida",
+    "slug": "corrida",
+    "description": "Corridas em que o caminho não para e o desvio faz a diferença.",
+    "seoTitle": "Jogos de corrida grátis",
+    "seoDescription": "Corra no navegador, sem instalar.",
+    "sortOrder": 30,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Esportes",
+    "slug": "esportes",
+    "description": "Partidas curtas de esporte, com regras simples e uma bola ou uma meta.",
+    "seoTitle": "Jogos de esporte grátis",
+    "seoDescription": "Esportes rápidos para jogar no navegador.",
+    "sortOrder": 40,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Puzzle",
+    "slug": "puzzle",
+    "description": "Quebra-cabeças e encaixes para resolver sem pressa.",
+    "seoTitle": "Jogos de puzzle grátis",
+    "seoDescription": "Puzzles no navegador, sem instalar.",
+    "sortOrder": 50,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Estratégia",
+    "slug": "estrategia",
+    "description": "Decisões em turnos ou em tabuleiros pequenos, com tempo para pensar.",
+    "seoTitle": "Jogos de estratégia grátis",
+    "seoDescription": "Estratégia leve para jogar no navegador.",
+    "sortOrder": 60,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Multiplayer",
+    "slug": "multiplayer",
+    "description": "Jogos pensados para mais de uma pessoa no mesmo navegador.",
+    "seoTitle": "Jogos multiplayer grátis",
+    "seoDescription": "Jogos para várias pessoas no navegador.",
+    "sortOrder": 70,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Arcade",
+    "slug": "arcade",
+    "description": "Partidas curtas, pontuação alta e recomeço imediato.",
+    "seoTitle": "Jogos de arcade grátis",
+    "seoDescription": "Arcade no navegador, sem instalar.",
+    "sortOrder": 80,
+    "childDirected": false,
+    "active": true
+  },
+  {
+    "name": "Educativos",
+    "slug": "educativos",
+    "description": "Jogos para praticar atenção, contagem ou leitura, com público infantil em mente.",
+    "seoTitle": "Jogos educativos grátis",
+    "seoDescription": "Jogos educativos no navegador.",
+    "sortOrder": 90,
+    "childDirected": true,
+    "active": true
+  },
+  {
+    "name": "Jogos de dois jogadores",
+    "slug": "dois-jogadores",
+    "description": "Duelos locais para duas pessoas no mesmo teclado ou na mesma tela.",
+    "seoTitle": "Jogos de dois jogadores grátis",
+    "seoDescription": "Jogos para dois no mesmo navegador.",
+    "sortOrder": 100,
+    "childDirected": false,
+    "active": true
+  }
+]
