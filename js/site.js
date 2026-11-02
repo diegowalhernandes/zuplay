@@ -29,7 +29,7 @@ var frameJogo = document.querySelector(".player iframe");
 
 if (frameJogo) {
   var teclaDeJogo = function (tecla) {
-    return tecla === "ArrowLeft" || tecla === "ArrowRight" || tecla === "ArrowUp" || tecla === " " || tecla === "a" || tecla === "A" || tecla === "d" || tecla === "D" || tecla === "w" || tecla === "W";
+    return tecla === "ArrowLeft" || tecla === "ArrowRight" || tecla === "ArrowUp" || tecla === "ArrowDown" || tecla === " " || tecla === "a" || tecla === "A" || tecla === "d" || tecla === "D" || tecla === "w" || tecla === "W" || tecla === "s" || tecla === "S";
   };
 
   var focoEmCampo = function (alvo) {

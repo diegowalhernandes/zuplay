@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Pilha Veloz</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1c1430;
+        color: #f4f1fb;
+        font-family: "Segoe UI", sans-serif;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        flex: 1;
+        object-fit: contain;
+        touch-action: none;
+      }
+
+      .controles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px;
+      }
+
+      .controles button {
+        border: 0;
+        border-radius: 12px;
+        background: #2a2140;
+        color: #f4f1fb;
+        font: 700 16px / 1 "Segoe UI", sans-serif;
+        min-width: 64px;
+        min-height: 48px;
+        flex: 1;
+        cursor: pointer;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      #girar,
+      #de-novo {
+        background: #c4b5fd;
+        color: #1c1430;
+      }
+
+      #soltar {
+        background: #f5b800;
+        color: #1c1430;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="poco" width="480" height="640"></canvas>
+    <div class="controles">
+      <button id="esquerda" type="button" aria-label="Esquerda">←</button>
+      <button id="direita" type="button" aria-label="Direita">→</button>
+      <button id="girar" type="button">Girar</button>
+      <button id="descer" type="button">Descer</button>
+      <button id="soltar" type="button">Soltar</button>
+      <button id="de-novo" type="button" hidden>De novo</button>
+    </div>
+    <script>
+      var canvas = document.getElementById("poco");
+      var ctx = canvas.getContext("2d");
+      var deNovo = document.getElementById("de-novo");
+      var colunas = 10;
+      var fileiras = 20;
+      var celula = 26;
+      var origemX = 16;
+      var origemY = 48;
+      var cores = {
+        I: "#38bdf8",
+        O: "#f5b800",
+        T: "#c4b5fd",
+        L: "#fb7185",
+        J: "#818cf8",
+        S: "#34d399",
+        Z: "#f472b6"
+      };
+      var valores = [0, 100, 300, 500, 800];
+      var grade = [];
+      var peca = null;
+      var proxima = null;
+      var saco = [];
+      var pontos = 0;
+      var fase = 1;
+      var linhasNaFase = 0;
+      var vencido = false;
+      var acabou = false;
+      var aviso = "";
+      var avisoTempo = 0;
+      var queda = 0;
+      var apoio = 0;
+      var lado = 0;
+      var esperandoLado = 0;
+      var seguraEsquerda = false;
+      var seguraDireita = false;
+      var baixo = false;
+
+      function girarEmTorno(lista, centro) {
+        return lista.map(function (c) {
+          var rx = c[0] - centro;
+          var ry = c[1] - centro;
+          return [Math.round(centro + ry), Math.round(centro - rx)];
+        });
+      }
+
+      function serie(base, centro) {
+        var lista = [base];
+        var atual = base;
+        for (var i = 0; i < 3; i += 1) {
+          atual = girarEmTorno(atual, centro);
+          lista.push(atual);
+        }
+        return lista;
+      }
+
+      var formas = {
+        I: serie([[0, 1], [1, 1], [2, 1], [3, 1]], 1.5),
+        O: serie([[1, 0], [2, 0], [1, 1], [2, 1]], 1.5),
+        T: serie([[1, 0], [0, 1], [1, 1], [2, 1]], 1),
+        L: serie([[2, 0], [0, 1], [1, 1], [2, 1]], 1),
+        J: serie([[0, 0], [0, 1], [1, 1], [2, 1]], 1),
+        S: serie([[1, 0], [2, 0], [0, 1], [1, 1]], 1),
+        Z: serie([[0, 0], [1, 0], [1, 1], [2, 1]], 1)
+      };
+
+      function limparGrade() {
+        grade = [];
+        for (var y = 0; y < fileiras; y += 1) {
+          var linha = [];
+          for (var x = 0; x < colunas; x += 1) linha.push("");
+          grade.push(linha);
+        }
+      }
+
+      function ritmo() {
+        return 0.9 - ((fase - 1) / 99) * 0.8;
+      }
+
+      function tirarTipo() {
+        if (!saco.length) {
+          saco = ["I", "O", "T", "L", "J", "S", "Z"];
+          for (var i = saco.length - 1; i > 0; i -= 1) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var troca = saco[i];
+            saco[i] = saco[j];
+            saco[j] = troca;
+          }
+        }
+        return saco.pop();
+      }
+
+      function celulasDa(tipo, rot) {
+        return formas[tipo][rot % 4];
+      }
+
+      function cabe(tipo, rot, px, py) {
+        var lista = celulasDa(tipo, rot);
+        for (var i = 0; i < lista.length; i += 1) {
+          var x = px + lista[i][0];
+          var y = py + lista[i][1];
+          if (x < 0 || x >= colunas || y >= fileiras) return false;
+          if (y >= 0 && grade[y][x]) return false;
+        }
+        return true;
+      }
+
+      function acabar(texto) {
+        if (acabou || vencido) return;
+        acabou = true;
+        peca = null;
+        aviso = texto;
+        deNovo.hidden = false;
+      }
+
+      function novaPeca() {
+        var tipo = proxima || tirarTipo();
+        proxima = tirarTipo();
+        peca = { tipo: tipo, rot: 0, x: 3, y: 0 };
+        queda = 0;
+        apoio = 0;
+        if (!cabe(peca.tipo, peca.rot, peca.x, peca.y)) acabar("Empilhou");
+      }
+
+      function mover(dx, dy) {
+        if (!peca || acabou || vencido) return false;
+        if (!cabe(peca.tipo, peca.rot, peca.x + dx, peca.y + dy)) return false;
+        peca.x += dx;
+        peca.y += dy;
+        return true;
+      }
+
+      function rotacionar() {
+        if (!peca || acabou || vencido || peca.tipo === "O") return false;
+        var rot = (peca.rot + 1) % 4;
+        var chutes = [0, -1, 1, -2, 2];
+        for (var i = 0; i < chutes.length; i += 1) {
+          if (cabe(peca.tipo, rot, peca.x + chutes[i], peca.y)) {
+            peca.rot = rot;
+            peca.x += chutes[i];
+            apoio = 0;
+            return true;
+          }
+        }
+        return false;
+      }
+
+      function limparLinhas() {
+        var n = 0;
+        for (var y = fileiras - 1; y >= 0; y -= 1) {
+          var cheia = true;
+          for (var x = 0; x < colunas; x += 1) {
+            if (!grade[y][x]) cheia = false;
+          }
+          if (!cheia) continue;
+          grade.splice(y, 1);
+          var vazia = [];
+          for (var i = 0; i < colunas; i += 1) vazia.push("");
+          grade.unshift(vazia);
+          n += 1;
+          y += 1;
+        }
+        return n;
+      }
+
+      function somar(n) {
+        pontos += valores[n] * fase;
+        linhasNaFase += n;
+        while (linhasNaFase >= 4 && !vencido) {
+          linhasNaFase -= 4;
+          if (fase >= 100) {
+            vencido = true;
+            peca = null;
+            aviso = "Você chegou";
+            deNovo.hidden = false;
+            return;
+          }
+          fase += 1;
+          aviso = "Fase " + fase;
+          avisoTempo = 1.1;
+        }
+      }
+
+      function fixar() {
+        if (!peca) return;
+        var lista = celulasDa(peca.tipo, peca.rot);
+        var fora = false;
+        for (var i = 0; i < lista.length; i += 1) {
+          var x = peca.x + lista[i][0];
+          var y = peca.y + lista[i][1];
+          if (y < 0) fora = true;
+          else grade[y][x] = peca.tipo;
+        }
+        var apagadas = limparLinhas();
+        peca = null;
+        if (apagadas) somar(apagadas);
+        if (vencido) return;
+        if (fora) {
+          acabar("Empilhou");
+          return;
+        }
+        novaPeca();
+      }
+
+      function soltar() {
+        if (!peca || acabou || vencido) return;
+        var n = 0;
+        while (mover(0, 1)) n += 1;
+        pontos += n * 2;
+        fixar();
+      }
+
+      function yFantasma() {
+        var y = peca.y;
+        while (cabe(peca.tipo, peca.rot, peca.x, y + 1)) y += 1;
+        return y;
+      }
+
+      function atualizarLado() {
+        var novo = seguraDireita ? 1 : seguraEsquerda ? -1 : 0;
+        if (novo === lado) return;
+        lado = novo;
+        if (lado) {
+          mover(lado, 0);
+          esperandoLado = 0.16;
+          apoio = 0;
+        }
+      }
+
+      function atualizar(dt) {
+        if (vencido || acabou) return;
+        if (avisoTempo > 0) {
+          avisoTempo -= dt;
+          if (avisoTempo <= 0) aviso = "";
+        }
+        if (lado) {
+          esperandoLado -= dt;
+          if (esperandoLado <= 0) {
+            mover(lado, 0);
+            esperandoLado = 0.05;
+            apoio = 0;
+          }
+        }
+        if (!peca) return;
+        var noChao = !cabe(peca.tipo, peca.rot, peca.x, peca.y + 1);
+        if (noChao) {
+          apoio += dt;
+          if (apoio >= (baixo ? 0.08 : 0.45)) fixar();
+          return;
+        }
+        apoio = 0;
+        queda += dt;
+        var passo = baixo ? 0.035 : ritmo();
+        while (queda >= passo && peca) {
+          queda -= passo;
+          if (!mover(0, 1)) break;
+          if (baixo) pontos += 1;
+        }
+      }
+
+      function quadrado(x, y, cor, fantasma) {
+        ctx.globalAlpha = fantasma ? 0.28 : 1;
+        ctx.fillStyle = cor;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x + 1, y + 1, celula - 2, celula - 2, 4);
+        else ctx.rect(x + 1, y + 1, celula - 2, celula - 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      function desenharPeca(tipo, rot, px, py, fantasma) {
+        var lista = celulasDa(tipo, rot);
+        for (var i = 0; i < lista.length; i += 1) {
+          var x = px + lista[i][0];
+          var y = py + lista[i][1];
+          if (y < 0) continue;
+          quadrado(origemX + x * celula, origemY + y * celula, cores[tipo], fantasma);
+        }
+      }
+
+      function desenhar() {
+        ctx.fillStyle = "#1c1430";
+        ctx.fillRect(0, 0, 480, 640);
+        ctx.fillStyle = "#120e22";
+        ctx.fillRect(origemX, origemY, colunas * celula, fileiras * celula);
+        for (var y = 0; y < fileiras; y += 1) {
+          for (var x = 0; x < colunas; x += 1) {
+            if (!grade[y][x]) continue;
+            quadrado(origemX + x * celula, origemY + y * celula, cores[grade[y][x]], false);
+          }
+        }
+        if (peca) {
+          desenharPeca(peca.tipo, peca.rot, peca.x, yFantasma(), true);
+          desenharPeca(peca.tipo, peca.rot, peca.x, peca.y, false);
+        }
+        ctx.fillStyle = "#f4f1fb";
+        ctx.font = "700 22px Segoe UI, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Fase " + fase + "/100", 16, 32);
+        ctx.textAlign = "right";
+        ctx.fillText("Pontos " + pontos.toLocaleString("pt-BR"), 464, 32);
+        ctx.textAlign = "left";
+        ctx.font = "700 16px Segoe UI, sans-serif";
+        ctx.fillText("Linhas " + linhasNaFase + "/4", 300, 78);
+        ctx.fillText("Próxima", 300, 114);
+        if (proxima) {
+          var previa = celulasDa(proxima, 0);
+          for (var i = 0; i < previa.length; i += 1) {
+            quadrado(308 + previa[i][0] * 26, 132 + previa[i][1] * 26, cores[proxima], false);
+          }
+        }
+        if (aviso) {
+          ctx.textAlign = "center";
+          ctx.font = "700 36px Segoe UI, sans-serif";
+          ctx.fillStyle = "#f5b800";
+          ctx.fillText(aviso, 240, 300);
+        }
+      }
+
+      function comecar() {
+        limparGrade();
+        pontos = 0;
+        fase = 1;
+        linhasNaFase = 0;
+        vencido = false;
+        acabou = false;
+        aviso = "";
+        avisoTempo = 0;
+        queda = 0;
+        apoio = 0;
+        saco = [];
+        proxima = null;
+        lado = 0;
+        esperandoLado = 0;
+        seguraEsquerda = false;
+        seguraDireita = false;
+        baixo = false;
+        deNovo.hidden = true;
+        novaPeca();
+      }
+
+      function segurar(botao, apertar, soltarToque) {
+        var ativo = false;
+
+        function iniciar(evento) {
+          if (evento.cancelable) evento.preventDefault();
+          if (ativo) return;
+          ativo = true;
+          if (evento.pointerId !== undefined && botao.setPointerCapture) {
+            try {
+              botao.setPointerCapture(evento.pointerId);
+            } catch (erro) {
+              /* segue o toque mesmo sem captura */
+            }
+          }
+          apertar();
+        }
+
+        function terminar() {
+          if (!ativo) return;
+          ativo = false;
+          soltarToque();
+        }
+
+        botao.addEventListener("pointerdown", iniciar);
+        botao.addEventListener("touchstart", iniciar, { passive: false });
+        botao.addEventListener("pointerup", terminar);
+        botao.addEventListener("pointercancel", terminar);
+        botao.addEventListener("touchend", terminar);
+        botao.addEventListener("touchcancel", terminar);
+      }
+
+      function aplicarTecla(tecla, aperta) {
+        if ((acabou || vencido) && aperta && tecla === " ") {
+          comecar();
+          return;
+        }
+        if (acabou || vencido) return;
+        if (tecla === "ArrowLeft" || tecla === "a" || tecla === "A") {
+          seguraEsquerda = aperta;
+          atualizarLado();
+        } else if (tecla === "ArrowRight" || tecla === "d" || tecla === "D") {
+          seguraDireita = aperta;
+          atualizarLado();
+        } else if (tecla === "ArrowDown" || tecla === "s" || tecla === "S") {
+          baixo = aperta;
+        } else if (aperta && (tecla === "ArrowUp" || tecla === "w" || tecla === "W")) {
+          rotacionar();
+        } else if (aperta && tecla === " ") {
+          soltar();
+        }
+      }
+
+      segurar(document.getElementById("esquerda"), function () {
+        seguraEsquerda = true;
+        atualizarLado();
+      }, function () {
+        seguraEsquerda = false;
+        atualizarLado();
+      });
+      segurar(document.getElementById("direita"), function () {
+        seguraDireita = true;
+        atualizarLado();
+      }, function () {
+        seguraDireita = false;
+        atualizarLado();
+      });
+      segurar(document.getElementById("descer"), function () { baixo = true; }, function () { baixo = false; });
+      document.getElementById("girar").addEventListener("pointerdown", function (evento) {
+        if (evento.cancelable) evento.preventDefault();
+        rotacionar();
+      });
+      document.getElementById("soltar").addEventListener("pointerdown", function (evento) {
+        if (evento.cancelable) evento.preventDefault();
+        soltar();
+      });
+      deNovo.addEventListener("click", comecar);
+
+      window.addEventListener("keydown", function (evento) {
+        var tecla = evento.key;
+        if (tecla === "ArrowLeft" || tecla === "ArrowRight" || tecla === "ArrowUp" || tecla === "ArrowDown" || tecla === " ") {
+          evento.preventDefault();
+        }
+        if (evento.repeat && (tecla === "ArrowUp" || tecla === "w" || tecla === "W" || tecla === " ")) return;
+        aplicarTecla(tecla, true);
+      });
+
+      window.addEventListener("keyup", function (evento) {
+        aplicarTecla(evento.key, false);
+      });
+
+      window.addEventListener("message", function (evento) {
+        var dados = evento.data;
+        if (!dados || dados.tipo !== "zuplay-tecla") return;
+        aplicarTecla(dados.tecla, dados.aperta);
+      });
+
+      document.addEventListener("contextmenu", function (evento) {
+        evento.preventDefault();
+      });
+
+      document.addEventListener("selectstart", function (evento) {
+        evento.preventDefault();
+      });
+
+      var ultimo = 0;
+      function quadro(agora) {
+        var dt = Math.min(0.033, ultimo ? (agora - ultimo) / 1000 : 0.016);
+        ultimo = agora;
+        atualizar(dt);
+        desenhar();
+        requestAnimationFrame(quadro);
+      }
+
+      comecar();
+      requestAnimationFrame(quadro);
+    </script>
+  </body>
+</html>

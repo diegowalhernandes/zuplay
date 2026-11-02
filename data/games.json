@@ -134,5 +134,39 @@
       "validUntil": "",
       "verified": true
     }
+  },
+  {
+    "title": "Pilha Veloz",
+    "slug": "pilha-veloz",
+    "shortDescription": "Encaixe blocos, some pontos e acelere até a fase cem.",
+    "description": "Pilha Veloz é um jogo original do Zuplay. Blocos de quatro quadrados caem num poço e você os encaixa para completar linhas. Uma linha vale cem pontos vezes a fase, duas valem trezentos, três valem quinhentos e quatro valem oitocentos, sempre multiplicados pela fase atual. A cada quatro linhas a fase avança, até a fase cem, e o bloco passa a cair mais depressa. O placar fica no alto da tela e zera quando a página é recarregada. Se a pilha encostar no topo, a partida acaba e pode recomeçar na hora. Dá para jogar no computador ou no celular, sem instalar nada e sem criar conta. Os blocos, o poço e as cores foram feitos para este portal e não vêm de outro jogo.",
+    "instructions": "Encaixe os blocos e complete linhas horizontais. Cada linha some e marca pontos. Quatro linhas avançam a fase, até a fase cem, e a queda fica mais rápida. Se a pilha chegar ao topo, a partida acaba.",
+    "controls": "No computador, use as setas ou A e D para mover, W ou seta para cima para girar, S ou seta para baixo para descer, e espaço para soltar. Os botões na tela também funcionam.",
+    "mobileCompatible": true,
+    "status": "published",
+    "publishedAt": "2026-11-02",
+    "category": "puzzle",
+    "tags": ["blocos", "pontos"],
+    "developer": "Zuplay",
+    "embed": { "mode": "hosted", "path": "play/index.html" },
+    "thumbnail": "/assets/games/pilha-veloz/thumb.png",
+    "cover": "/assets/games/pilha-veloz/cover.png",
+    "coverAlt": "Blocos coloridos empilhados num poço roxo",
+    "seoTitle": "Pilha Veloz",
+    "seoDescription": "Encaixe blocos, complete linhas e acelere até a fase cem.",
+    "playCount": 0,
+    "childDirected": false,
+    "homepage": { "featured": true, "recommended": false },
+    "license": {
+      "sourceType": "original",
+      "rightsHolder": "Zuplay",
+      "licenseName": "Uso próprio no portal",
+      "licenseUrl": "",
+      "allowsEmbedding": true,
+      "attributionRequired": false,
+      "attributionText": "",
+      "validUntil": "",
+      "verified": true
+    }
   }
 ]
