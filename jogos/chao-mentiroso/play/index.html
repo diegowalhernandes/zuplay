@@ -72,7 +72,7 @@
     <script>
       var canvas = document.getElementById("fase");
       var ctx = canvas.getContext("2d");
-      var fases = [
+      var fasesProntas = [
         {
           nome: "Atravesse",
           inicio: { x: 48, y: 420 },
@@ -198,6 +198,159 @@
           espinhos: [{ x: 760, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 640 }]
         }
       ];
+
+      function portaNoChao(x) {
+        return { x: x, y: 382, w: 56, h: 78 };
+      }
+
+      function faseDeVao(n) {
+        var fim = 300 + (n % 5) * 20;
+        var intervalo = 100 + (n % 3) * 10;
+        var direita = fim + intervalo;
+        return {
+          nome: "Vão",
+          inicio: { x: 48, y: 420 },
+          porta: portaNoChao(880),
+          blocos: [
+            { x: 0, y: 460, w: fim, h: 80 },
+            { x: direita, y: 460, w: 960 - direita, h: 80 }
+          ]
+        };
+      }
+
+      function faseDeRachadura(n) {
+        var fim = 300 + (n % 4) * 20;
+        var racha = fim + 24;
+        var direita = racha + 96 + 28;
+        return {
+          nome: "Rachadura",
+          inicio: { x: 48, y: 420 },
+          porta: portaNoChao(880),
+          blocos: [
+            { x: 0, y: 460, w: fim, h: 80 },
+            { x: racha, y: 460, w: 96, h: 80, cair: 0.22 },
+            { x: direita, y: 460, w: 960 - direita, h: 80 }
+          ]
+        };
+      }
+
+      function faseDeEspinho(n) {
+        var x = 500 + (n % 6) * 30;
+        return {
+          nome: "Espinho",
+          inicio: { x: 48, y: 420 },
+          porta: portaNoChao(880),
+          blocos: [{ x: 0, y: 460, w: 960, h: 80 }],
+          espinhos: [{ x: x, w: 36, base: 460, altura: 8, alvo: 74, gatilho: x - 180 }]
+        };
+      }
+
+      function faseDeDoisVaos(n) {
+        var a = 260 + (n % 4) * 15;
+        var intervalo = 110;
+        var meio = 190;
+        var segundo = a + intervalo;
+        var terceiro = segundo + meio + intervalo;
+        return {
+          nome: "Dois vãos",
+          inicio: { x: 48, y: 420 },
+          porta: portaNoChao(880),
+          blocos: [
+            { x: 0, y: 460, w: a, h: 80 },
+            { x: segundo, y: 460, w: meio, h: 80 },
+            { x: terceiro, y: 460, w: 960 - terceiro, h: 80 }
+          ]
+        };
+      }
+
+      function faseDeCorreria(n) {
+        var atrasos = n % 2 === 0
+          ? [0.7, 1.3, 1.9, 2.5, 3.1, 4.2]
+          : [0.85, 1.55, 2.25, 2.95, 4.1];
+        var largura = 960 / atrasos.length;
+        return {
+          nome: "Correria",
+          inicio: { x: 48, y: 420 },
+          porta: portaNoChao(880),
+          blocos: atrasos.map(function (quando, indice) {
+            return { x: indice * largura, y: 460, w: largura, h: 80, someEm: quando };
+          })
+        };
+      }
+
+      function faseDeBloco(n) {
+        var direita = 740 + (n % 3) * 20;
+        return {
+          nome: "Bloco móvel",
+          inicio: { x: 48, y: 420 },
+          porta: portaNoChao(880),
+          blocos: [
+            { x: 0, y: 460, w: 260, h: 80 },
+            { x: 80, y: 460, w: 200, h: 24, anda: 60 + (n % 3) * 10, x0: 80, x1: direita - 200 },
+            { x: direita, y: 460, w: 960 - direita, h: 80 }
+          ]
+        };
+      }
+
+      function faseDeDegraus(n) {
+        var alto = n % 2 === 0;
+        if (!alto) {
+          return {
+            nome: "Degraus",
+            inicio: { x: 48, y: 420 },
+            porta: { x: 840, y: 202, w: 56, h: 78 },
+            blocos: [
+              { x: 0, y: 460, w: 340, h: 80 },
+              { x: 400, y: 370, w: 240, h: 24 },
+              { x: 600, y: 280, w: 360, h: 24 }
+            ]
+          };
+        }
+        return {
+          nome: "Degraus",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 820, y: 112, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 280, h: 80 },
+            { x: 360, y: 370, w: 200, h: 24 },
+            { x: 540, y: 280, w: 200, h: 24 },
+            { x: 720, y: 190, w: 240, h: 24 }
+          ]
+        };
+      }
+
+      function faseMista(n) {
+        var espinho = 740 + (n % 3) * 20;
+        return {
+          nome: "Rota mista",
+          inicio: { x: 48, y: 420 },
+          porta: portaNoChao(880),
+          blocos: [
+            { x: 0, y: 460, w: 360, h: 80 },
+            { x: 390, y: 460, w: 110, h: 80, cair: 0.22 },
+            { x: 530, y: 460, w: 430, h: 80 }
+          ],
+          espinhos: [{ x: espinho, w: 36, base: 460, altura: 8, alvo: 74, gatilho: espinho - 140 }]
+        };
+      }
+
+      function fasesGeradas() {
+        var lista = [];
+        for (var n = 0; n < 88; n += 1) {
+          var tipo = n % 8;
+          if (tipo === 0) lista.push(faseDeVao(n));
+          else if (tipo === 1) lista.push(faseDeRachadura(n));
+          else if (tipo === 2) lista.push(faseDeEspinho(n));
+          else if (tipo === 3) lista.push(faseDeDoisVaos(n));
+          else if (tipo === 4) lista.push(faseDeCorreria(n));
+          else if (tipo === 5) lista.push(faseDeBloco(n));
+          else if (tipo === 6) lista.push(faseDeDegraus(n));
+          else lista.push(faseMista(n));
+        }
+        return lista;
+      }
+
+      var fases = fasesProntas.concat(fasesGeradas());
       var gravidade = 1800;
       var velocidade = 320;
       var forcaPulo = -680;
