@@ -57,7 +57,9 @@ Jogo da Forca entrou em 12 de outubro de 2026, na categoria Puzzle. A ficha não
 
 Cada palavra do Jogo da Forca mostra uma dica. No Edge, maçã apareceu com a dica Fruta, o acerto continuou valendo, e Nova palavra trocou a dica.
 
-Chão Mentiroso entrou em 2 de novembro de 2026, na categoria Arcade. É um plataforma original, com seis fases curtas. No Edge, o pulo do vão, a queda no piso rachado, o espinho, a escada, o bloco que anda e a corrida final foram concluídos. A ficha não mostra capa acima do iframe.
+Chão Mentiroso entrou em 2 de novembro de 2026, na categoria Arcade. É um plataforma original, com doze fases curtas. No Edge, o pulo do vão, a queda no piso rachado, o espinho, a escada, o bloco que anda e a corrida final foram concluídos. A ficha não mostra capa acima do iframe.
+
+Mais seis fases entraram no mesmo dia: dois vãos, duas rachaduras, dois espinhos, três degraus, um vão comprido e um pulo com espinho. No Edge, as doze foram concluídas.
 
 No computador, as setas chegam ao jogo mesmo sem clicar dentro dele, e os botões da tela também movem o bloco. No celular, segurar um botão não abre o menu de copiar.
 

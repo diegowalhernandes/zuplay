@@ -132,6 +132,70 @@
             { x: 640, y: 460, w: 160, h: 80, someEm: 3.1 },
             { x: 800, y: 460, w: 160, h: 80, someEm: 4.2 }
           ]
+        },
+        {
+          nome: "Dois vãos",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 880, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 300, h: 80 },
+            { x: 440, y: 460, w: 200, h: 80 },
+            { x: 780, y: 460, w: 180, h: 80 }
+          ]
+        },
+        {
+          nome: "Duas rachaduras",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 890, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 340, h: 80 },
+            { x: 370, y: 460, w: 100, h: 80, cair: 0.22 },
+            { x: 500, y: 460, w: 220, h: 80 },
+            { x: 750, y: 460, w: 100, h: 80, cair: 0.22 },
+            { x: 880, y: 460, w: 80, h: 80 }
+          ]
+        },
+        {
+          nome: "Dois espinhos",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 880, y: 382, w: 56, h: 78 },
+          blocos: [{ x: 0, y: 460, w: 960, h: 80 }],
+          espinhos: [
+            { x: 400, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 250 },
+            { x: 700, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 540 }
+          ]
+        },
+        {
+          nome: "Três degraus",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 800, y: 112, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 240, h: 80 },
+            { x: 300, y: 370, w: 240, h: 24 },
+            { x: 500, y: 280, w: 220, h: 24 },
+            { x: 680, y: 190, w: 240, h: 24 }
+          ]
+        },
+        {
+          nome: "Vão comprido",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 880, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 240, h: 80 },
+            { x: 60, y: 460, w: 200, h: 24, anda: 70, x0: 60, x1: 560 },
+            { x: 760, y: 460, w: 200, h: 80 }
+          ]
+        },
+        {
+          nome: "Pulo e espinho",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 880, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 360, h: 80 },
+            { x: 390, y: 460, w: 110, h: 80, cair: 0.22 },
+            { x: 530, y: 460, w: 430, h: 80 }
+          ],
+          espinhos: [{ x: 760, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 640 }]
         }
       ];
       var gravidade = 1800;
