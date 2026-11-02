@@ -61,7 +61,9 @@ Chão Mentiroso entrou em 2 de novembro de 2026, na categoria Arcade. É um plat
 
 Mais seis fases entraram no mesmo dia: dois vãos, duas rachaduras, dois espinhos, três degraus, um vão comprido e um pulo com espinho.
 
-O jogo passou a ter cem fases no mesmo dia. As doze primeiras continuam desenhadas à mão. As outras repetem vão, rachadura, espinho, correria, bloco móvel, degraus e rota mista. No Edge, as cem foram concluídas.
+O jogo passou a ter cem fases no mesmo dia. As doze primeiras continuam desenhadas à mão.
+
+No mesmo dia o piso que cede, o espinho e a porta falsa deixaram de se anunciar: ficam com a mesma cara do chão seguro e da porta verdadeira. As fases seguintes também deixaram de repetir o mesmo desenho. No Edge, as cem foram concluídas de novo.
 
 No computador, as setas chegam ao jogo mesmo sem clicar dentro dele, e os botões da tela também movem o bloco. No celular, segurar um botão não abre o menu de copiar.
 

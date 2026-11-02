@@ -97,7 +97,7 @@
           inicio: { x: 48, y: 420 },
           porta: { x: 860, y: 382, w: 56, h: 78 },
           blocos: [{ x: 0, y: 460, w: 960, h: 80 }],
-          espinhos: [{ x: 640, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 470 }]
+          espinhos: [{ x: 640, w: 36, base: 460, altura: 0, alvo: 74, gatilho: 470 }]
         },
         {
           nome: "A amarela mente",
@@ -161,8 +161,8 @@
           porta: { x: 880, y: 382, w: 56, h: 78 },
           blocos: [{ x: 0, y: 460, w: 960, h: 80 }],
           espinhos: [
-            { x: 400, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 250 },
-            { x: 700, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 540 }
+            { x: 400, w: 36, base: 460, altura: 0, alvo: 74, gatilho: 250 },
+            { x: 700, w: 36, base: 460, altura: 0, alvo: 74, gatilho: 540 }
           ]
         },
         {
@@ -195,157 +195,380 @@
             { x: 390, y: 460, w: 110, h: 80, cair: 0.22 },
             { x: 530, y: 460, w: 430, h: 80 }
           ],
-          espinhos: [{ x: 760, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 640 }]
+          espinhos: [{ x: 760, w: 36, base: 460, altura: 0, alvo: 74, gatilho: 640 }]
         }
       ];
 
-      function portaNoChao(x) {
-        return { x: x, y: 382, w: 56, h: 78 };
+      function portaEm(x, y) {
+        return { x: x, y: y, w: 56, h: 78 };
       }
 
-      function faseDeVao(n) {
-        var fim = 300 + (n % 5) * 20;
-        var intervalo = 100 + (n % 3) * 10;
+      function piso(x, y, w, h, extra) {
+        var bloco = { x: x, y: y, w: w, h: h };
+        if (extra) {
+          Object.keys(extra).forEach(function (chave) {
+            bloco[chave] = extra[chave];
+          });
+        }
+        return bloco;
+      }
+
+      function espinhoEm(x, base) {
+        return { x: x, w: 36, base: base, altura: 0, alvo: 74, gatilho: x - 170 };
+      }
+
+      function faseVao(n) {
+        var fim = 220 + (n % 7) * 28;
+        var intervalo = 90 + (n % 4) * 16;
         var direita = fim + intervalo;
+        var curto = n % 5 === 0;
+        var largura = curto ? 220 : 960 - direita;
         return {
-          nome: "Vão",
+          nome: "",
           inicio: { x: 48, y: 420 },
-          porta: portaNoChao(880),
+          porta: portaEm(fim + 200, 382),
           blocos: [
-            { x: 0, y: 460, w: fim, h: 80 },
-            { x: direita, y: 460, w: 960 - direita, h: 80 }
+            piso(0, 460, fim, curto ? 28 : 80),
+            piso(direita, 460, largura, curto ? 28 : 80)
           ]
         };
       }
 
-      function faseDeRachadura(n) {
-        var fim = 300 + (n % 4) * 20;
-        var racha = fim + 24;
-        var direita = racha + 96 + 28;
-        return {
-          nome: "Rachadura",
-          inicio: { x: 48, y: 420 },
-          porta: portaNoChao(880),
-          blocos: [
-            { x: 0, y: 460, w: fim, h: 80 },
-            { x: racha, y: 460, w: 96, h: 80, cair: 0.22 },
-            { x: direita, y: 460, w: 960 - direita, h: 80 }
-          ]
-        };
-      }
-
-      function faseDeEspinho(n) {
-        var x = 500 + (n % 6) * 30;
-        return {
-          nome: "Espinho",
-          inicio: { x: 48, y: 420 },
-          porta: portaNoChao(880),
-          blocos: [{ x: 0, y: 460, w: 960, h: 80 }],
-          espinhos: [{ x: x, w: 36, base: 460, altura: 8, alvo: 74, gatilho: x - 180 }]
-        };
-      }
-
-      function faseDeDoisVaos(n) {
-        var a = 260 + (n % 4) * 15;
-        var intervalo = 110;
-        var meio = 190;
+      function faseDoisVaos(n) {
+        var a = 200 + (n % 5) * 24;
+        var intervalo = 100 + (n % 3) * 12;
+        var meio = 160 + (n % 4) * 12;
         var segundo = a + intervalo;
         var terceiro = segundo + meio + intervalo;
         return {
-          nome: "Dois vãos",
+          nome: "",
           inicio: { x: 48, y: 420 },
-          porta: portaNoChao(880),
+          porta: portaEm(terceiro + 120, 382),
           blocos: [
-            { x: 0, y: 460, w: a, h: 80 },
-            { x: segundo, y: 460, w: meio, h: 80 },
-            { x: terceiro, y: 460, w: 960 - terceiro, h: 80 }
+            piso(0, 460, a, 80),
+            piso(segundo, 460, meio, 28),
+            piso(terceiro, 460, 960 - terceiro, 80)
           ]
         };
       }
 
-      function faseDeCorreria(n) {
-        var atrasos = n % 2 === 0
-          ? [0.7, 1.3, 1.9, 2.5, 3.1, 4.2]
-          : [0.85, 1.55, 2.25, 2.95, 4.1];
-        var largura = 960 / atrasos.length;
+      function faseTresVaos(n) {
+        var intervalo = 96 + (n % 5) * 8;
+        var meio = 150;
+        var resto = 960 - intervalo * 3 - meio * 2;
+        var esquerda = Math.round(resto * 0.46);
+        var segundo = esquerda + intervalo;
+        var terceiro = segundo + meio + intervalo;
+        var quarto = terceiro + meio + intervalo;
         return {
-          nome: "Correria",
+          nome: "",
           inicio: { x: 48, y: 420 },
-          porta: portaNoChao(880),
-          blocos: atrasos.map(function (quando, indice) {
-            return { x: indice * largura, y: 460, w: largura, h: 80, someEm: quando };
-          })
-        };
-      }
-
-      function faseDeBloco(n) {
-        var direita = 740 + (n % 3) * 20;
-        return {
-          nome: "Bloco móvel",
-          inicio: { x: 48, y: 420 },
-          porta: portaNoChao(880),
+          porta: portaEm(quarto + 120, 382),
           blocos: [
-            { x: 0, y: 460, w: 260, h: 80 },
-            { x: 80, y: 460, w: 200, h: 24, anda: 60 + (n % 3) * 10, x0: 80, x1: direita - 200 },
-            { x: direita, y: 460, w: 960 - direita, h: 80 }
+            piso(0, 460, esquerda, 36),
+            piso(segundo, 460, meio, 36),
+            piso(terceiro, 460, meio, 36),
+            piso(quarto, 460, 960 - quarto, 36)
           ]
         };
       }
 
-      function faseDeDegraus(n) {
-        var alto = n % 2 === 0;
-        if (!alto) {
+      function faseIlhas(n) {
+        var modo = n % 5;
+        if (modo < 2) {
+          var y = 280 + modo * 50;
+          var a = 200 + (n % 7) * 12;
+          var intervalo = 108;
+          var meio = 176;
+          var segundo = a + intervalo;
+          var terceiro = segundo + meio + intervalo;
           return {
-            nome: "Degraus",
-            inicio: { x: 48, y: 420 },
-            porta: { x: 840, y: 202, w: 56, h: 78 },
+            nome: "",
+            inicio: { x: 48, y: y - 40 },
+            porta: portaEm(terceiro + 120, y - 78),
             blocos: [
-              { x: 0, y: 460, w: 340, h: 80 },
-              { x: 400, y: 370, w: 240, h: 24 },
-              { x: 600, y: 280, w: 360, h: 24 }
+              piso(0, y, a, 28),
+              piso(segundo, y, meio, 28),
+              piso(terceiro, y, 960 - terceiro, 28)
+            ]
+          };
+        }
+        var s = (modo - 2) * 14;
+        var w0 = 240 + s;
+        var x1 = w0 + 70;
+        var x2 = x1 + 190 + 64;
+        var x3 = x2 + 170 + 56;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(x3 + 24, 112),
+          blocos: [
+            piso(0, 460, w0, 80),
+            piso(x1, 370, 190, 24),
+            piso(x2, 280, 170, 24),
+            piso(x3, 190, 960 - x3, 24)
+          ]
+        };
+      }
+
+      function faseOco(n) {
+        var inicio = 240 + (n % 11) * 28;
+        var largura = 100 + (n % 5) * 12;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [
+            piso(0, 460, inicio, 80),
+            piso(inicio, 460, largura, 80, { oco: true }),
+            piso(inicio + largura, 460, 960 - inicio - largura, 80)
+          ]
+        };
+      }
+
+      function faseOcoDuplo(n) {
+        var a = 200 + (n % 7) * 16;
+        var intervalo = 100 + (n % 5) * 8;
+        var meio = 168;
+        var segundo = a + intervalo;
+        var terceiro = segundo + meio + intervalo;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(terceiro + 120, 382),
+          blocos: [
+            piso(0, 460, a, 80),
+            piso(a, 460, intervalo, 80, { oco: true }),
+            piso(segundo, 460, meio, 80),
+            piso(segundo + meio, 460, intervalo, 80, { oco: true }),
+            piso(terceiro, 460, 960 - terceiro, 80)
+          ]
+        };
+      }
+
+      function faseRachadura(n) {
+        var inicio = 220 + (n % 11) * 40;
+        var largura = 108;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [
+            piso(0, 460, inicio, 80),
+            piso(inicio, 460, largura, 80, { cair: 0.16 }),
+            piso(inicio + largura, 460, 960 - inicio - largura, 80)
+          ]
+        };
+      }
+
+      function faseDuasRachaduras(n) {
+        var a = 220 + (n % 7) * 22;
+        var meio = 190;
+        var segundo = a + 108;
+        var terceira = segundo + meio;
+        var quarta = terceira + 108;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [
+            piso(0, 460, a, 80),
+            piso(a, 460, 108, 80, { cair: 0.16 }),
+            piso(segundo, 460, meio, 80),
+            piso(terceira, 460, 108, 80, { cair: 0.16 }),
+            piso(quarta, 460, 960 - quarta, 80)
+          ]
+        };
+      }
+
+      function faseEspinho(n) {
+        var x = 300 + (n % 11) * 38;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [piso(0, 460, 960, 80)],
+          espinhos: [espinhoEm(x, 460)]
+        };
+      }
+
+      function faseDoisEspinhos(n) {
+        var primeiro = 270 + (n % 5) * 22;
+        var segundo = primeiro + 290 + (n % 3) * 16;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [piso(0, 460, 960, 80)],
+          espinhos: [espinhoEm(primeiro, 460), espinhoEm(segundo, 460)]
+        };
+      }
+
+      function faseVaoEspinho(n) {
+        var fim = 220 + (n % 7) * 16;
+        var intervalo = 108;
+        var direita = fim + intervalo;
+        var espinho = fim + 350 + (n % 5) * 14;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [
+            piso(0, 460, fim, 80),
+            piso(direita, 460, 960 - direita, 80)
+          ],
+          espinhos: [espinhoEm(espinho, 460)]
+        };
+      }
+
+      function faseVaoRachadura(n) {
+        var fim = 210 + (n % 7) * 14;
+        var direita = fim + 104;
+        var racha = fim + 250;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [
+            piso(0, 460, fim, 36),
+            piso(direita, 460, racha - direita, 36),
+            piso(racha, 460, 108, 36, { cair: 0.16 }),
+            piso(racha + 108, 460, 960 - racha - 108, 80)
+          ]
+        };
+      }
+
+      function faseOcoEspinho(n) {
+        var inicio = 250 + (n % 5) * 24;
+        var largura = 112;
+        var espinho = inicio + largura + 210;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: [
+            piso(0, 460, inicio, 80),
+            piso(inicio, 460, largura, 80, { oco: true }),
+            piso(inicio + largura, 460, 960 - inicio - largura, 80)
+          ],
+          espinhos: [espinhoEm(espinho, 460)]
+        };
+      }
+
+      function faseCorreria(n) {
+        var partes = 5 + (n % 5);
+        var largura = 960 / partes;
+        var blocos = [];
+        for (var i = 0; i < partes; i += 1) {
+          var saida = (i * largura + largura - 48) / 320;
+          blocos.push(piso(i * largura, 460, largura, 80, {
+            someEm: i === partes - 1 ? saida + 1.35 : saida + 0.4
+          }));
+        }
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(880, 382),
+          blocos: blocos
+        };
+      }
+
+      function faseBloco(n) {
+        var limite = 380 + (n % 7) * 30;
+        var direita = limite + 200;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(Math.min(890, direita + 36), 382),
+          blocos: [
+            piso(0, 460, 260, 80),
+            piso(80, 460, 200, 80, { anda: 60 + (n % 5) * 7, x0: 80, x1: limite }),
+            piso(direita, 460, 960 - direita, 80)
+          ]
+        };
+      }
+
+      function faseDegraus(n) {
+        var s = (n % 5) * 12;
+        if ((n % 11) % 2 === 0) {
+          return {
+            nome: "",
+            inicio: { x: 48, y: 420 },
+            porta: portaEm(800, 112),
+            blocos: [
+              piso(0, 460, 250 + s, 80),
+              piso(330 + s, 370, 180, 24),
+              piso(500 + s, 280, 170, 24),
+              piso(660 + s, 190, 300 - s, 24)
             ]
           };
         }
         return {
-          nome: "Degraus",
+          nome: "",
           inicio: { x: 48, y: 420 },
-          porta: { x: 820, y: 112, w: 56, h: 78 },
+          porta: portaEm(820 + s, 202),
           blocos: [
-            { x: 0, y: 460, w: 280, h: 80 },
-            { x: 360, y: 370, w: 200, h: 24 },
-            { x: 540, y: 280, w: 200, h: 24 },
-            { x: 720, y: 190, w: 240, h: 24 }
+            piso(0, 460, 300 + s, 80),
+            piso(390 + s, 370, 200, 24),
+            piso(590 + s, 280, 370 - s, 24)
           ]
         };
       }
 
-      function faseMista(n) {
-        var espinho = 740 + (n % 3) * 20;
+      function fasePortaFalsa(n) {
+        var s = (n % 5) * 16;
         return {
-          nome: "Rota mista",
+          nome: "",
           inicio: { x: 48, y: 420 },
-          porta: portaNoChao(880),
+          porta: portaEm(660 + s, 202),
+          falsa: portaEm(870, 382),
           blocos: [
-            { x: 0, y: 460, w: 360, h: 80 },
-            { x: 390, y: 460, w: 110, h: 80, cair: 0.22 },
-            { x: 530, y: 460, w: 430, h: 80 }
-          ],
-          espinhos: [{ x: espinho, w: 36, base: 460, altura: 8, alvo: 74, gatilho: espinho - 140 }]
+            piso(0, 460, 960, 80),
+            piso(320 + s, 370, 190, 24),
+            piso(520 + s, 280, 280, 24)
+          ]
+        };
+      }
+
+      function faseCurta(n) {
+        var fim = 200 + (n % 7) * 18;
+        var plataforma = fim + 100;
+        return {
+          nome: "",
+          inicio: { x: 48, y: 420 },
+          porta: portaEm(plataforma + 36, 382),
+          blocos: [
+            piso(0, 460, fim, 80),
+            piso(fim, 460, 100, 80, { cair: 0.16 }),
+            piso(plataforma, 460, 190, 28)
+          ]
         };
       }
 
       function fasesGeradas() {
+        var modelos = [
+          faseVao,
+          faseDoisVaos,
+          faseTresVaos,
+          faseIlhas,
+          faseOco,
+          faseOcoDuplo,
+          faseRachadura,
+          faseDuasRachaduras,
+          faseEspinho,
+          faseDoisEspinhos,
+          faseVaoEspinho,
+          faseVaoRachadura,
+          faseOcoEspinho,
+          faseCorreria,
+          faseBloco,
+          faseDegraus,
+          fasePortaFalsa,
+          faseCurta
+        ];
         var lista = [];
         for (var n = 0; n < 88; n += 1) {
-          var tipo = n % 8;
-          if (tipo === 0) lista.push(faseDeVao(n));
-          else if (tipo === 1) lista.push(faseDeRachadura(n));
-          else if (tipo === 2) lista.push(faseDeEspinho(n));
-          else if (tipo === 3) lista.push(faseDeDoisVaos(n));
-          else if (tipo === 4) lista.push(faseDeCorreria(n));
-          else if (tipo === 5) lista.push(faseDeBloco(n));
-          else if (tipo === 6) lista.push(faseDeDegraus(n));
-          else lista.push(faseMista(n));
+          lista.push(modelos[(n * 7) % modelos.length](n));
         }
         return lista;
       }
@@ -380,6 +603,7 @@
               w: bloco.w,
               h: bloco.h,
               cair: bloco.cair || 0,
+              oco: !!bloco.oco,
               someEm: bloco.someEm || 0,
               anda: bloco.anda || 0,
               x0: bloco.x0 || 0,
@@ -451,7 +675,7 @@
         var pes = jogador.y + jogador.h;
         var melhor = null;
         fase.blocos.forEach(function (bloco) {
-          if (bloco.caindo) return;
+          if (bloco.caindo || bloco.oco) return;
           if (Math.abs(pes - bloco.y) > 3) return;
           if (jogador.x + jogador.w <= bloco.x + 2 || jogador.x >= bloco.x + bloco.w - 2) return;
           if (!melhor || bloco.anda) melhor = bloco;
@@ -462,7 +686,7 @@
       function resolver(eixoX) {
         var chao = null;
         fase.blocos.forEach(function (bloco) {
-          if (bloco.caindo) return;
+          if (bloco.caindo || bloco.oco) return;
           if (!sobrepoe(jogador, bloco)) return;
           if (eixoX) {
             jogador.x = jogador.vx >= 0 ? bloco.x - jogador.w - 0.01 : bloco.x + bloco.w + 0.01;
@@ -559,21 +783,21 @@
       function desenhar() {
         ctx.fillStyle = "#1c1430";
         ctx.fillRect(0, 0, 960, 540);
+        function desenharPorta(porta) {
+          ctx.fillStyle = "#c4b5fd";
+          retangulo(porta.x, porta.y, porta.w, porta.h, 8);
+          ctx.fillStyle = "#5b21b6";
+          retangulo(porta.x + 8, porta.y + 8, porta.w - 16, porta.h - 16, 6);
+        }
+
         fase.blocos.forEach(function (bloco) {
-          ctx.fillStyle = bloco.cair ? "#4c1d95" : "#2a2140";
+          ctx.fillStyle = "#2a2140";
           retangulo(bloco.x, bloco.y, bloco.w, bloco.h, 6);
-          ctx.fillStyle = bloco.cair ? "#f5b800" : "#c4b5fd";
+          ctx.fillStyle = "#c4b5fd";
           ctx.fillRect(bloco.x, bloco.y, bloco.w, 6);
-          if (bloco.cair) {
-            ctx.strokeStyle = "#f5b800";
-            ctx.beginPath();
-            ctx.moveTo(bloco.x + 16, bloco.y + 28);
-            ctx.lineTo(bloco.x + bloco.w * 0.4, bloco.y + 52);
-            ctx.lineTo(bloco.x + bloco.w - 16, bloco.y + 30);
-            ctx.stroke();
-          }
         });
         fase.espinhos.forEach(function (espinho) {
+          if (espinho.altura < 3) return;
           ctx.fillStyle = "#f4f1fb";
           ctx.beginPath();
           ctx.moveTo(espinho.x, espinho.base);
@@ -581,16 +805,8 @@
           ctx.lineTo(espinho.x + espinho.w, espinho.base);
           ctx.fill();
         });
-        ctx.fillStyle = "#c4b5fd";
-        retangulo(fase.porta.x, fase.porta.y, fase.porta.w, fase.porta.h, 8);
-        ctx.fillStyle = "#5b21b6";
-        retangulo(fase.porta.x + 8, fase.porta.y + 8, fase.porta.w - 16, fase.porta.h - 16, 6);
-        if (fase.falsa) {
-          ctx.fillStyle = "#f5b800";
-          retangulo(fase.falsa.x, fase.falsa.y, fase.falsa.w, fase.falsa.h, 8);
-          ctx.fillStyle = "#1c1430";
-          retangulo(fase.falsa.x + 8, fase.falsa.y + 8, fase.falsa.w - 16, fase.falsa.h - 16, 6);
-        }
+        desenharPorta(fase.porta);
+        if (fase.falsa) desenharPorta(fase.falsa);
         ctx.fillStyle = "#f5b800";
         retangulo(jogador.x, jogador.y, jogador.w, jogador.h, 8);
         ctx.fillStyle = "#1c1430";
@@ -598,7 +814,7 @@
         ctx.fillStyle = "#f4f1fb";
         ctx.font = "700 22px Segoe UI, sans-serif";
         ctx.textAlign = "left";
-        ctx.fillText("Fase " + (faseIndice + 1) + " · " + fase.nome, 16, 32);
+        ctx.fillText("Fase " + (faseIndice + 1), 16, 32);
         ctx.textAlign = "right";
         ctx.fillText("Quedas " + quedas, 944, 32);
         if (aviso) {
