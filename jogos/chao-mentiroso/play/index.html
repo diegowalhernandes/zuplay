@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Chão Mentiroso</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1c1430;
+        color: #f4f1fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        flex: 1;
+        touch-action: none;
+      }
+
+      .controles {
+        display: flex;
+        gap: 8px;
+        padding: 8px;
+      }
+
+      .controles button {
+        border: 0;
+        border-radius: 12px;
+        background: #2a2140;
+        color: #f4f1fb;
+        font: 700 16px / 1 "Segoe UI", sans-serif;
+        min-width: 72px;
+        min-height: 48px;
+        cursor: pointer;
+        touch-action: none;
+      }
+
+      #pular,
+      #de-novo {
+        margin-left: auto;
+        background: #c4b5fd;
+        color: #1c1430;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="fase" width="960" height="540"></canvas>
+    <div class="controles">
+      <button id="esquerda" type="button" aria-label="Esquerda">←</button>
+      <button id="direita" type="button" aria-label="Direita">→</button>
+      <button id="pular" type="button">Pular</button>
+      <button id="de-novo" type="button" hidden>De novo</button>
+    </div>
+    <script>
+      var canvas = document.getElementById("fase");
+      var ctx = canvas.getContext("2d");
+      var fases = [
+        {
+          nome: "Atravesse",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 860, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 400, h: 80 },
+            { x: 560, y: 460, w: 400, h: 80 }
+          ]
+        },
+        {
+          nome: "Piso rachado",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 860, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 400, h: 80 },
+            { x: 430, y: 460, w: 120, h: 80, cair: 0.22 },
+            { x: 580, y: 460, w: 380, h: 80 }
+          ]
+        },
+        {
+          nome: "Espinho baixo",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 860, y: 382, w: 56, h: 78 },
+          blocos: [{ x: 0, y: 460, w: 960, h: 80 }],
+          espinhos: [{ x: 640, w: 36, base: 460, altura: 8, alvo: 74, gatilho: 470 }]
+        },
+        {
+          nome: "A amarela mente",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 700, y: 202, w: 56, h: 78 },
+          falsa: { x: 860, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 960, h: 80 },
+            { x: 360, y: 370, w: 220, h: 24 },
+            { x: 560, y: 280, w: 250, h: 24 }
+          ]
+        },
+        {
+          nome: "Bloco viajante",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 860, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 300, h: 80 },
+            { x: 140, y: 460, w: 200, h: 24, anda: 90, x0: 140, x1: 500 },
+            { x: 700, y: 460, w: 260, h: 80 }
+          ]
+        },
+        {
+          nome: "Não pare",
+          inicio: { x: 48, y: 420 },
+          porta: { x: 860, y: 382, w: 56, h: 78 },
+          blocos: [
+            { x: 0, y: 460, w: 160, h: 80, someEm: 0.7 },
+            { x: 160, y: 460, w: 160, h: 80, someEm: 1.3 },
+            { x: 320, y: 460, w: 160, h: 80, someEm: 1.9 },
+            { x: 480, y: 460, w: 160, h: 80, someEm: 2.5 },
+            { x: 640, y: 460, w: 160, h: 80, someEm: 3.1 },
+            { x: 800, y: 460, w: 160, h: 80, someEm: 4.2 }
+          ]
+        }
+      ];
+      var gravidade = 1800;
+      var velocidade = 320;
+      var forcaPulo = -680;
+      var jogador = { x: 48, y: 420, w: 34, h: 40, vx: 0, vy: 0, noChao: false };
+      var faseIndice = 0;
+      var fase = null;
+      var quedas = 0;
+      var espera = 0;
+      var passouFase = false;
+      var vencido = false;
+      var tempoFase = 0;
+      var apoio = null;
+      var esquerda = false;
+      var direita = false;
+      var aviso = "";
+      var deNovo = document.getElementById("de-novo");
+
+      function clonar(origem) {
+        return {
+          nome: origem.nome,
+          porta: { x: origem.porta.x, y: origem.porta.y, w: origem.porta.w, h: origem.porta.h },
+          falsa: origem.falsa ? { x: origem.falsa.x, y: origem.falsa.y, w: origem.falsa.w, h: origem.falsa.h } : null,
+          blocos: origem.blocos.map(function (bloco) {
+            return {
+              x: bloco.x,
+              y: bloco.y,
+              w: bloco.w,
+              h: bloco.h,
+              cair: bloco.cair || 0,
+              someEm: bloco.someEm || 0,
+              anda: bloco.anda || 0,
+              x0: bloco.x0 || 0,
+              x1: bloco.x1 || 0,
+              firmeza: 0,
+              caindo: false,
+              vy: 0,
+              dir: 1,
+              deslocamento: 0
+            };
+          }),
+          espinhos: (origem.espinhos || []).map(function (espinho) {
+            return {
+              x: espinho.x,
+              w: espinho.w,
+              base: espinho.base,
+              altura: espinho.altura,
+              alvo: espinho.alvo,
+              gatilho: espinho.gatilho,
+              sobe: 0
+            };
+          })
+        };
+      }
+
+      function sobrepoe(a, b) {
+        return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+      }
+
+      function comecarFase(indice) {
+        faseIndice = indice;
+        fase = clonar(fases[indice]);
+        jogador.x = fases[indice].inicio.x;
+        jogador.y = fases[indice].inicio.y;
+        jogador.vx = 0;
+        jogador.vy = 0;
+        jogador.noChao = false;
+        apoio = null;
+        tempoFase = 0;
+        passouFase = false;
+        espera = 0;
+        aviso = "";
+        vencido = false;
+        deNovo.hidden = true;
+      }
+
+      function pedirPulo() {
+        if (vencido || espera > 0 || !jogador.noChao) return;
+        jogador.vy = forcaPulo;
+        jogador.noChao = false;
+        apoio = null;
+      }
+
+      function morrer() {
+        if (espera > 0 || vencido) return;
+        quedas += 1;
+        espera = 0.4;
+        aviso = "Caiu";
+      }
+
+      function passar() {
+        if (espera > 0 || vencido) return;
+        passouFase = true;
+        espera = 0.35;
+        aviso = "Porta";
+      }
+
+      function acharApoio() {
+        var pes = jogador.y + jogador.h;
+        var melhor = null;
+        fase.blocos.forEach(function (bloco) {
+          if (bloco.caindo) return;
+          if (Math.abs(pes - bloco.y) > 3) return;
+          if (jogador.x + jogador.w <= bloco.x + 2 || jogador.x >= bloco.x + bloco.w - 2) return;
+          if (!melhor || bloco.anda) melhor = bloco;
+        });
+        return melhor;
+      }
+
+      function resolver(eixoX) {
+        var chao = null;
+        fase.blocos.forEach(function (bloco) {
+          if (bloco.caindo) return;
+          if (!sobrepoe(jogador, bloco)) return;
+          if (eixoX) {
+            jogador.x = jogador.vx >= 0 ? bloco.x - jogador.w - 0.01 : bloco.x + bloco.w + 0.01;
+            jogador.vx = 0;
+          } else if (jogador.vy >= 0) {
+            jogador.y = bloco.y - jogador.h - 0.01;
+            jogador.vy = 0;
+            chao = bloco;
+          } else {
+            jogador.y = bloco.y + bloco.h + 0.01;
+            jogador.vy = 0;
+          }
+        });
+        return chao;
+      }
+
+      function atualizar(dt) {
+        if (vencido) return;
+        if (espera > 0) {
+          espera -= dt;
+          if (espera <= 0) {
+            if (passouFase && faseIndice + 1 >= fases.length) {
+              vencido = true;
+              aviso = "Você chegou";
+              deNovo.hidden = false;
+              return;
+            }
+            comecarFase(passouFase ? faseIndice + 1 : faseIndice);
+          }
+          return;
+        }
+
+        tempoFase += dt;
+        fase.blocos.forEach(function (bloco) {
+          bloco.deslocamento = 0;
+          if (bloco.anda) {
+            var antes = bloco.x;
+            bloco.x += bloco.dir * bloco.anda * dt;
+            if (bloco.x <= bloco.x0 || bloco.x >= bloco.x1) {
+              bloco.dir *= -1;
+              bloco.x = Math.max(bloco.x0, Math.min(bloco.x1, bloco.x));
+            }
+            bloco.deslocamento = bloco.x - antes;
+          }
+          if (bloco.someEm && tempoFase >= bloco.someEm) bloco.caindo = true;
+          if (bloco.caindo) {
+            bloco.vy += gravidade * dt;
+            bloco.y += bloco.vy * dt;
+          }
+        });
+
+        if (apoio && apoio.deslocamento && !apoio.caindo) jogador.x += apoio.deslocamento;
+
+        jogador.vx = direita ? velocidade : esquerda ? -velocidade : 0;
+        jogador.vy += gravidade * dt;
+        if (jogador.vy > 980) jogador.vy = 980;
+        jogador.x += jogador.vx * dt;
+        resolver(true);
+        jogador.y += jogador.vy * dt;
+        var chao = resolver(false);
+        jogador.noChao = !!chao;
+        apoio = acharApoio() || chao;
+
+        fase.blocos.forEach(function (bloco) {
+          if (!bloco.cair || bloco.caindo) return;
+          if (chao === bloco) bloco.firmeza += dt;
+          else bloco.firmeza = 0;
+          if (bloco.firmeza >= bloco.cair) bloco.caindo = true;
+        });
+
+        fase.espinhos.forEach(function (espinho) {
+          if (jogador.x + jogador.w > espinho.gatilho) espinho.sobe = 260;
+          if (espinho.sobe && espinho.altura < espinho.alvo) {
+            espinho.altura = Math.min(espinho.alvo, espinho.altura + espinho.sobe * dt);
+          }
+          var caixaEspinho = { x: espinho.x, y: espinho.base - espinho.altura, w: espinho.w, h: espinho.altura };
+          if (sobrepoe(jogador, caixaEspinho)) morrer();
+        });
+
+        if (fase.falsa && sobrepoe(jogador, fase.falsa)) morrer();
+        if (jogador.y > 600) morrer();
+
+        var centro = { x: jogador.x + 8, y: jogador.y + 8, w: jogador.w - 16, h: jogador.h - 16 };
+        if (sobrepoe(centro, fase.porta)) passar();
+      }
+
+      function retangulo(x, y, w, h, raio) {
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x, y, w, h, raio);
+        else ctx.rect(x, y, w, h);
+        ctx.fill();
+      }
+
+      function desenhar() {
+        ctx.fillStyle = "#1c1430";
+        ctx.fillRect(0, 0, 960, 540);
+        fase.blocos.forEach(function (bloco) {
+          ctx.fillStyle = bloco.cair ? "#4c1d95" : "#2a2140";
+          retangulo(bloco.x, bloco.y, bloco.w, bloco.h, 6);
+          ctx.fillStyle = bloco.cair ? "#f5b800" : "#c4b5fd";
+          ctx.fillRect(bloco.x, bloco.y, bloco.w, 6);
+          if (bloco.cair) {
+            ctx.strokeStyle = "#f5b800";
+            ctx.beginPath();
+            ctx.moveTo(bloco.x + 16, bloco.y + 28);
+            ctx.lineTo(bloco.x + bloco.w * 0.4, bloco.y + 52);
+            ctx.lineTo(bloco.x + bloco.w - 16, bloco.y + 30);
+            ctx.stroke();
+          }
+        });
+        fase.espinhos.forEach(function (espinho) {
+          ctx.fillStyle = "#f4f1fb";
+          ctx.beginPath();
+          ctx.moveTo(espinho.x, espinho.base);
+          ctx.lineTo(espinho.x + espinho.w / 2, espinho.base - espinho.altura);
+          ctx.lineTo(espinho.x + espinho.w, espinho.base);
+          ctx.fill();
+        });
+        ctx.fillStyle = "#c4b5fd";
+        retangulo(fase.porta.x, fase.porta.y, fase.porta.w, fase.porta.h, 8);
+        ctx.fillStyle = "#5b21b6";
+        retangulo(fase.porta.x + 8, fase.porta.y + 8, fase.porta.w - 16, fase.porta.h - 16, 6);
+        if (fase.falsa) {
+          ctx.fillStyle = "#f5b800";
+          retangulo(fase.falsa.x, fase.falsa.y, fase.falsa.w, fase.falsa.h, 8);
+          ctx.fillStyle = "#1c1430";
+          retangulo(fase.falsa.x + 8, fase.falsa.y + 8, fase.falsa.w - 16, fase.falsa.h - 16, 6);
+        }
+        ctx.fillStyle = "#f5b800";
+        retangulo(jogador.x, jogador.y, jogador.w, jogador.h, 8);
+        ctx.fillStyle = "#1c1430";
+        ctx.fillRect(jogador.x + 6, jogador.y + 12, 22, 8);
+        ctx.fillStyle = "#f4f1fb";
+        ctx.font = "700 22px Segoe UI, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Fase " + (faseIndice + 1) + " · " + fase.nome, 16, 32);
+        ctx.textAlign = "right";
+        ctx.fillText("Quedas " + quedas, 944, 32);
+        if (aviso) {
+          ctx.textAlign = "center";
+          ctx.font = "700 36px Segoe UI, sans-serif";
+          ctx.fillText(aviso, 480, 80);
+        }
+      }
+
+      function segurar(botao, apertar, soltar) {
+        botao.addEventListener("pointerdown", function (evento) {
+          evento.preventDefault();
+          botao.setPointerCapture(evento.pointerId);
+          apertar();
+        });
+        botao.addEventListener("pointerup", soltar);
+        botao.addEventListener("pointercancel", soltar);
+      }
+
+      segurar(document.getElementById("esquerda"), function () { esquerda = true; }, function () { esquerda = false; });
+      segurar(document.getElementById("direita"), function () { direita = true; }, function () { direita = false; });
+      document.getElementById("pular").addEventListener("pointerdown", function (evento) {
+        evento.preventDefault();
+        pedirPulo();
+      });
+      deNovo.addEventListener("click", function () {
+        quedas = 0;
+        comecarFase(0);
+      });
+
+      window.addEventListener("keydown", function (evento) {
+        if (evento.repeat) return;
+        var tecla = evento.key;
+        if (tecla === "ArrowLeft" || tecla === "a" || tecla === "A") {
+          evento.preventDefault();
+          esquerda = true;
+        } else if (tecla === "ArrowRight" || tecla === "d" || tecla === "D") {
+          evento.preventDefault();
+          direita = true;
+        } else if (tecla === "ArrowUp" || tecla === "w" || tecla === "W" || tecla === " ") {
+          evento.preventDefault();
+          pedirPulo();
+        }
+      });
+
+      window.addEventListener("keyup", function (evento) {
+        var tecla = evento.key;
+        if (tecla === "ArrowLeft" || tecla === "a" || tecla === "A") esquerda = false;
+        if (tecla === "ArrowRight" || tecla === "d" || tecla === "D") direita = false;
+      });
+
+      var ultimo = 0;
+      function quadro(agora) {
+        var dt = Math.min(0.033, ultimo ? (agora - ultimo) / 1000 : 0.016);
+        ultimo = agora;
+        atualizar(dt);
+        desenhar();
+        requestAnimationFrame(quadro);
+      }
+
+      comecarFase(0);
+      requestAnimationFrame(quadro);
+    </script>
+  </body>
+</html>

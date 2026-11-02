@@ -2,7 +2,7 @@
 
 Estado: **Fase 4 concluída em 12 de outubro de 2026. Aguardando aprovação para a Fase 5.**
 
-Corrida do Bosque, Jogo da Velha e Jogo da Forca estão publicados e abrem no iframe. O restante da Fase 5 segue pendente.
+Corrida do Bosque, Jogo da Velha, Jogo da Forca e Chão Mentiroso estão publicados e abrem no iframe. O restante da Fase 5 segue pendente.
 
 ## Fase 0 — Planejamento e documentação
 
@@ -56,6 +56,8 @@ Jogo da Velha entrou em 12 de outubro de 2026, na categoria Jogos de dois jogado
 Jogo da Forca entrou em 12 de outubro de 2026, na categoria Puzzle. A ficha não mostra capa acima do iframe. No Edge, a palavra com cedilha foi acertada, seis erros revelaram a palavra, e Nova palavra começou outra rodada.
 
 Cada palavra do Jogo da Forca mostra uma dica. No Edge, maçã apareceu com a dica Fruta, o acerto continuou valendo, e Nova palavra trocou a dica.
+
+Chão Mentiroso entrou em 2 de novembro de 2026, na categoria Arcade. É um plataforma original, com seis fases curtas. No Edge, o pulo do vão, a queda no piso rachado, o espinho, a escada, o bloco que anda e a corrida final foram concluídos. A ficha não mostra capa acima do iframe.
 
 ## Fase 5 — Player
 
