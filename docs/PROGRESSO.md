@@ -59,6 +59,8 @@ Cada palavra do Jogo da Forca mostra uma dica. No Edge, maçã apareceu com a di
 
 Chão Mentiroso entrou em 2 de novembro de 2026, na categoria Arcade. É um plataforma original, com seis fases curtas. No Edge, o pulo do vão, a queda no piso rachado, o espinho, a escada, o bloco que anda e a corrida final foram concluídos. A ficha não mostra capa acima do iframe.
 
+No computador, as setas chegam ao jogo mesmo sem clicar dentro dele, e os botões da tela também movem o bloco. No celular, segurar um botão não abre o menu de copiar.
+
 ## Fase 5 — Player
 
 - [ ] Iframe com sandbox, tela cheia, erro e relacionados.

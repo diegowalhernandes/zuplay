@@ -25,6 +25,33 @@ document.querySelectorAll("[data-retry]").forEach(function (button) {
   });
 });
 
+var frameJogo = document.querySelector(".player iframe");
+
+if (frameJogo) {
+  var teclaDeJogo = function (tecla) {
+    return tecla === "ArrowLeft" || tecla === "ArrowRight" || tecla === "ArrowUp" || tecla === " " || tecla === "a" || tecla === "A" || tecla === "d" || tecla === "D" || tecla === "w" || tecla === "W";
+  };
+
+  var focoEmCampo = function (alvo) {
+    return alvo && alvo.closest && alvo.closest("input, textarea, button, a");
+  };
+
+  var enviarTecla = function (evento, aperta) {
+    if (!teclaDeJogo(evento.key) || focoEmCampo(evento.target)) return;
+    evento.preventDefault();
+    frameJogo.contentWindow.postMessage({ tipo: "zuplay-tecla", tecla: evento.key, aperta: aperta }, "*");
+  };
+
+  document.addEventListener("keydown", function (evento) {
+    if (evento.repeat) return;
+    enviarTecla(evento, true);
+  });
+
+  document.addEventListener("keyup", function (evento) {
+    enviarTecla(evento, false);
+  });
+}
+
 var playerWrap = document.querySelector(".player-wrap");
 var fullscreenButton = document.querySelector(".player__fullscreen");
 
