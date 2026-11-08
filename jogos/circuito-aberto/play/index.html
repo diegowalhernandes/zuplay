@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Circuito Aberto</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1c1430;
+        color: #f4f1fb;
+        font-family: "Segoe UI", sans-serif;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        flex: 1;
+        object-fit: contain;
+        touch-action: none;
+      }
+
+      .controles {
+        display: flex;
+        gap: 8px;
+        padding: 8px;
+      }
+
+      .controles button {
+        border: 0;
+        border-radius: 12px;
+        background: #2a2140;
+        color: #f4f1fb;
+        font: 700 18px / 1 "Segoe UI", sans-serif;
+        min-width: 72px;
+        min-height: 48px;
+        flex: 1;
+        cursor: pointer;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      #de-novo {
+        margin-left: auto;
+        background: #f5b800;
+        color: #1c1430;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="pista" width="960" height="540"></canvas>
+    <div class="controles">
+      <button id="esquerda" type="button" aria-label="Esquerda">←</button>
+      <button id="direita" type="button" aria-label="Direita">→</button>
+      <button id="de-novo" type="button" hidden>De novo</button>
+    </div>
+    <script>
+      var canvas = document.getElementById("pista");
+      var ctx = canvas.getContext("2d");
+      var deNovo = document.getElementById("de-novo");
+      var horizonte = 210;
+      var base = 520;
+      var carroY = 456;
+      var trechos = [
+        { curva: 0, metros: 520 },
+        { curva: -1, metros: 440 },
+        { curva: 0, metros: 280 },
+        { curva: 1, metros: 440 },
+        { curva: -0.7, metros: 360 },
+        { curva: 0.85, metros: 380 }
+      ];
+      var carroX = 480;
+      var centroBase = 480;
+      var lado = 0;
+      var distancia = 0;
+      var pontos = 0;
+      var velocidade = 200;
+      var curva = 0;
+      var trechoIndice = 0;
+      var trechoAndado = 0;
+      var rivais = [];
+      var acabou = false;
+      var aviso = "";
+
+      function centroNaLinha(y) {
+        var t = (y - horizonte) / (base - horizonte);
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        return 480 + (centroBase - 480) * t;
+      }
+
+      function meiaLargura(y) {
+        var t = (y - horizonte) / (base - horizonte);
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        return 28 + 210 * t;
+      }
+
+      function xDoRival(rival) {
+        return centroNaLinha(rival.y) + rival.deslocamento * meiaLargura(rival.y);
+      }
+
+      function bater() {
+        if (acabou) return;
+        acabou = true;
+        aviso = "Bateu";
+        deNovo.hidden = false;
+      }
+
+      function novoRival(y) {
+        var faixas = [-0.55, -0.2, 0.15, 0.5];
+        return {
+          deslocamento: faixas[Math.floor(Math.random() * faixas.length)],
+          y: y,
+          cor: Math.random() > 0.5 ? "#38bdf8" : "#fb7185"
+        };
+      }
+
+      function atualizar(dt) {
+        if (acabou) return;
+        if (lado) carroX += lado * 340 * dt;
+        if (carroX < 36) carroX = 36;
+        if (carroX > 924) carroX = 924;
+        velocidade = 200 + Math.min(220, distancia / 30);
+        var avanco = velocidade * dt;
+        distancia += avanco;
+        pontos = Math.floor(distancia / 12);
+        trechoAndado += avanco;
+        var trecho = trechos[trechoIndice];
+        if (trechoAndado >= trecho.metros) {
+          trechoAndado = 0;
+          trechoIndice = (trechoIndice + 1) % trechos.length;
+          trecho = trechos[trechoIndice];
+        }
+        curva = trecho.curva;
+        centroBase += curva * velocidade * 0.42 * dt;
+        if (centroBase < 200) centroBase = 200;
+        if (centroBase > 760) centroBase = 760;
+        var meio = meiaLargura(carroY);
+        var centro = centroNaLinha(carroY);
+        if (Math.abs(carroX - centro) > meio - 16) {
+          bater();
+          return;
+        }
+        for (var i = 0; i < rivais.length; i += 1) {
+          var rival = rivais[i];
+          rival.y += velocidade * dt * 0.62;
+          if (rival.y > 560) {
+            rivais[i] = novoRival(160 + Math.random() * 80);
+            continue;
+          }
+          if (rival.y > carroY - 34 && rival.y < carroY + 18 && Math.abs(xDoRival(rival) - carroX) < 40) {
+            bater();
+            return;
+          }
+        }
+      }
+
+      function desenharCarro(x, y, escala, cor) {
+        var largura = 28 * escala;
+        var altura = 46 * escala;
+        ctx.fillStyle = "#120e22";
+        ctx.fillRect(x - largura * 0.72, y - altura * 0.15, largura * 0.28, altura * 0.5);
+        ctx.fillRect(x + largura * 0.44, y - altura * 0.15, largura * 0.28, altura * 0.5);
+        ctx.fillStyle = cor;
+        ctx.fillRect(x - largura * 0.28, y - altura * 0.48, largura * 0.56, altura * 0.92);
+        ctx.fillStyle = "#c4b5fd";
+        ctx.fillRect(x - largura * 0.58, y + altura * 0.28, largura * 1.16, altura * 0.12);
+      }
+
+      function desenhar() {
+        ctx.fillStyle = "#24183f";
+        ctx.fillRect(0, 0, 960, horizonte);
+        ctx.fillStyle = "#14301c";
+        ctx.fillRect(0, horizonte, 960, 540 - horizonte);
+        for (var y = horizonte; y < base; y += 3) {
+          var centro = centroNaLinha(y);
+          var meio = meiaLargura(y);
+          ctx.fillStyle = "#2a2140";
+          ctx.fillRect(centro - meio, y, meio * 2, 3);
+          ctx.fillStyle = "#f5b800";
+          ctx.fillRect(centro - meio, y, 4, 3);
+          ctx.fillRect(centro + meio - 4, y, 4, 3);
+          if (Math.floor(y / 18) % 2 === 0) {
+            ctx.fillStyle = "#f4f1fb";
+            ctx.fillRect(centro - 2, y, 4, 3);
+          }
+        }
+        for (var i = 0; i < rivais.length; i += 1) {
+          var rival = rivais[i];
+          var escala = 0.45 + ((rival.y - horizonte) / (base - horizonte)) * 1.1;
+          desenharCarro(xDoRival(rival), rival.y, escala, rival.cor);
+        }
+        desenharCarro(carroX, carroY, 1.55, "#f5b800");
+        ctx.fillStyle = "#f4f1fb";
+        ctx.font = "700 22px Segoe UI, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Pontos " + pontos.toLocaleString("pt-BR"), 24, 36);
+        ctx.textAlign = "right";
+        ctx.fillText(Math.round(velocidade) + " km/h", 936, 36);
+        if (aviso) {
+          ctx.textAlign = "center";
+          ctx.font = "700 42px Segoe UI, sans-serif";
+          ctx.fillStyle = "#f5b800";
+          ctx.fillText(aviso, 480, 180);
+        }
+      }
+
+      function comecar() {
+        carroX = 480;
+        centroBase = 480;
+        lado = 0;
+        distancia = 0;
+        pontos = 0;
+        velocidade = 200;
+        curva = 0;
+        trechoIndice = 0;
+        trechoAndado = 0;
+        acabou = false;
+        aviso = "";
+        deNovo.hidden = true;
+        rivais = [novoRival(150), novoRival(210), novoRival(270)];
+      }
+
+      function aplicarTecla(tecla, aperta) {
+        if (acabou && aperta && tecla === " ") {
+          comecar();
+          return;
+        }
+        if (tecla === "ArrowLeft" || tecla === "a" || tecla === "A") {
+          if (aperta) lado = -1;
+          else if (lado === -1) lado = 0;
+        } else if (tecla === "ArrowRight" || tecla === "d" || tecla === "D") {
+          if (aperta) lado = 1;
+          else if (lado === 1) lado = 0;
+        }
+      }
+
+      function segurar(botao, aoApertar, aoSoltar) {
+        var ativo = false;
+
+        function iniciar(evento) {
+          if (evento.cancelable) evento.preventDefault();
+          if (ativo) return;
+          ativo = true;
+          if (evento.pointerId !== undefined && botao.setPointerCapture) {
+            try {
+              botao.setPointerCapture(evento.pointerId);
+            } catch (erro) {
+              /* segue o toque mesmo sem captura */
+            }
+          }
+          aoApertar();
+        }
+
+        function terminar() {
+          if (!ativo) return;
+          ativo = false;
+          aoSoltar();
+        }
+
+        botao.addEventListener("pointerdown", iniciar);
+        botao.addEventListener("touchstart", iniciar, { passive: false });
+        botao.addEventListener("pointerup", terminar);
+        botao.addEventListener("pointercancel", terminar);
+        botao.addEventListener("touchend", terminar);
+        botao.addEventListener("touchcancel", terminar);
+      }
+
+      segurar(document.getElementById("esquerda"), function () { lado = -1; }, function () { if (lado === -1) lado = 0; });
+      segurar(document.getElementById("direita"), function () { lado = 1; }, function () { if (lado === 1) lado = 0; });
+      deNovo.addEventListener("click", comecar);
+
+      window.addEventListener("keydown", function (evento) {
+        var tecla = evento.key;
+        if (tecla === "ArrowLeft" || tecla === "ArrowRight" || tecla === " ") evento.preventDefault();
+        if (evento.repeat) return;
+        aplicarTecla(tecla, true);
+      });
+
+      window.addEventListener("keyup", function (evento) {
+        aplicarTecla(evento.key, false);
+      });
+
+      window.addEventListener("message", function (evento) {
+        var dados = evento.data;
+        if (!dados || dados.tipo !== "zuplay-tecla") return;
+        aplicarTecla(dados.tecla, dados.aperta);
+      });
+
+      document.addEventListener("contextmenu", function (evento) {
+        evento.preventDefault();
+      });
+
+      document.addEventListener("selectstart", function (evento) {
+        evento.preventDefault();
+      });
+
+      var ultimo = 0;
+      function quadro(agora) {
+        var dt = Math.min(0.033, ultimo ? (agora - ultimo) / 1000 : 0.016);
+        ultimo = agora;
+        atualizar(dt);
+        desenhar();
+        requestAnimationFrame(quadro);
+      }
+
+      comecar();
+      requestAnimationFrame(quadro);
+    </script>
+  </body>
+</html>
