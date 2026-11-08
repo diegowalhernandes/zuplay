@@ -2,7 +2,7 @@
 
 Estado: **Fase 4 concluída em 12 de outubro de 2026. Aguardando aprovação para a Fase 5.**
 
-Corrida do Bosque, Jogo da Velha, Jogo da Forca, Chão Mentiroso e Pilha Veloz estão publicados e abrem no iframe. O restante da Fase 5 segue pendente.
+Corrida do Bosque, Jogo da Velha, Jogo da Forca, Chão Mentiroso, Pilha Veloz e Cobra no Pomar estão publicados e abrem no iframe. O restante da Fase 5 segue pendente.
 
 ## Fase 0 — Planejamento e documentação
 
@@ -68,6 +68,8 @@ No mesmo dia o piso que cede, o espinho e a porta falsa deixaram de se anunciar:
 No computador, as setas chegam ao jogo mesmo sem clicar dentro dele, e os botões da tela também movem o bloco. No celular, segurar um botão não abre o menu de copiar.
 
 Pilha Veloz entrou em 2 de novembro de 2026, na categoria Puzzle. Blocos de quatro quadrados caem num poço. O placar soma pontos por linha e a fase avança a cada quatro linhas, até a fase cem, com a queda mais rápida. No Edge, uma linha somou pontos, a fase passou de 1 para 2, a fase 100 concluiu a partida e o intervalo da queda diminuiu.
+
+Cobra no Pomar entrou em 8 de novembro de 2026, na categoria Arcade. A cobra cresce ao comer a fruta e a partida acaba se ela bate na borda ou no próprio corpo. No Edge, a fruta aumentou o tamanho e os pontos, a volta para trás foi ignorada, a borda e o próprio corpo encerraram a partida.
 
 ## Fase 5 — Player
 

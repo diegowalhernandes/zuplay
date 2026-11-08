@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Cobra no Pomar</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1c1430;
+        color: #f4f1fb;
+        font-family: "Segoe UI", sans-serif;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        flex: 1;
+        object-fit: contain;
+        touch-action: none;
+      }
+
+      .controles {
+        display: flex;
+        gap: 8px;
+        padding: 8px;
+      }
+
+      .controles button {
+        border: 0;
+        border-radius: 12px;
+        background: #2a2140;
+        color: #f4f1fb;
+        font: 700 18px / 1 "Segoe UI", sans-serif;
+        min-width: 64px;
+        min-height: 48px;
+        flex: 1;
+        cursor: pointer;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      #de-novo {
+        background: #f5b800;
+        color: #1c1430;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="pomar" width="480" height="520"></canvas>
+    <div class="controles">
+      <button id="esquerda" type="button" aria-label="Esquerda">←</button>
+      <button id="cima" type="button" aria-label="Cima">↑</button>
+      <button id="baixo" type="button" aria-label="Baixo">↓</button>
+      <button id="direita" type="button" aria-label="Direita">→</button>
+      <button id="de-novo" type="button" hidden>De novo</button>
+    </div>
+    <script>
+      var canvas = document.getElementById("pomar");
+      var ctx = canvas.getContext("2d");
+      var deNovo = document.getElementById("de-novo");
+      var colunas = 16;
+      var fileiras = 16;
+      var celula = 26;
+      var origemX = 32;
+      var origemY = 56;
+      var corpo = [];
+      var direcao = { x: 1, y: 0 };
+      var fila = [];
+      var fruta = { x: 10, y: 8 };
+      var pontos = 0;
+      var comidas = 0;
+      var intervalo = 0.16;
+      var espera = 0;
+      var acabou = false;
+      var aviso = "";
+
+      function ritmoInicial() {
+        return 0.16;
+      }
+
+      function ocupar(x, y) {
+        for (var i = 0; i < corpo.length; i += 1) {
+          if (corpo[i].x === x && corpo[i].y === y) return true;
+        }
+        return false;
+      }
+
+      function colocarFruta() {
+        var livres = [];
+        for (var y = 0; y < fileiras; y += 1) {
+          for (var x = 0; x < colunas; x += 1) {
+            if (!ocupar(x, y)) livres.push({ x: x, y: y });
+          }
+        }
+        if (!livres.length) {
+          acabou = true;
+          aviso = "Pomar cheio";
+          deNovo.hidden = false;
+          return;
+        }
+        fruta = livres[Math.floor(Math.random() * livres.length)];
+      }
+
+      function virar(x, y) {
+        if (acabou) return;
+        var ultima = fila.length ? fila[fila.length - 1] : direcao;
+        if (x === ultima.x && y === ultima.y) return;
+        if (x === -ultima.x && y === -ultima.y) return;
+        if (fila.length >= 2) return;
+        fila.push({ x: x, y: y });
+      }
+
+      function bater() {
+        if (acabou) return;
+        acabou = true;
+        aviso = "Bateu";
+        deNovo.hidden = false;
+      }
+
+      function avancar() {
+        if (acabou) return;
+        if (fila.length) direcao = fila.shift();
+        var cabeca = { x: corpo[0].x + direcao.x, y: corpo[0].y + direcao.y };
+        if (cabeca.x < 0 || cabeca.y < 0 || cabeca.x >= colunas || cabeca.y >= fileiras) {
+          bater();
+          return;
+        }
+        var comeu = cabeca.x === fruta.x && cabeca.y === fruta.y;
+        var limite = corpo.length - (comeu ? 0 : 1);
+        for (var i = 0; i < limite; i += 1) {
+          if (corpo[i].x === cabeca.x && corpo[i].y === cabeca.y) {
+            bater();
+            return;
+          }
+        }
+        corpo.unshift(cabeca);
+        if (!comeu) {
+          corpo.pop();
+          return;
+        }
+        pontos += 10;
+        comidas += 1;
+        if (comidas % 4 === 0 && intervalo > 0.07) intervalo = Math.round((intervalo - 0.01) * 100) / 100;
+        colocarFruta();
+      }
+
+      function atualizar(dt) {
+        if (acabou) return;
+        espera += dt;
+        while (espera >= intervalo && !acabou) {
+          espera -= intervalo;
+          avancar();
+        }
+      }
+
+      function desenhar() {
+        ctx.fillStyle = "#1c1430";
+        ctx.fillRect(0, 0, 480, 520);
+        ctx.fillStyle = "#120e22";
+        ctx.fillRect(origemX, origemY, colunas * celula, fileiras * celula);
+        ctx.fillStyle = "#fb7185";
+        ctx.beginPath();
+        ctx.arc(
+          origemX + fruta.x * celula + celula / 2,
+          origemY + fruta.y * celula + celula / 2,
+          celula * 0.32,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        for (var i = corpo.length - 1; i >= 0; i -= 1) {
+          var parte = corpo[i];
+          ctx.fillStyle = i === 0 ? "#f5b800" : "#c4b5fd";
+          ctx.beginPath();
+          var px = origemX + parte.x * celula + 2;
+          var py = origemY + parte.y * celula + 2;
+          var lado = celula - 4;
+          if (ctx.roundRect) ctx.roundRect(px, py, lado, lado, 6);
+          else ctx.rect(px, py, lado, lado);
+          ctx.fill();
+        }
+        ctx.fillStyle = "#f4f1fb";
+        ctx.font = "700 22px Segoe UI, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Pontos " + pontos.toLocaleString("pt-BR"), 32, 34);
+        ctx.textAlign = "right";
+        ctx.fillText("Tamanho " + corpo.length, 448, 34);
+        if (aviso) {
+          ctx.textAlign = "center";
+          ctx.font = "700 36px Segoe UI, sans-serif";
+          ctx.fillStyle = "#f5b800";
+          ctx.fillText(aviso, 240, 270);
+        }
+      }
+
+      function comecar() {
+        corpo = [
+          { x: 5, y: 8 },
+          { x: 4, y: 8 },
+          { x: 3, y: 8 }
+        ];
+        direcao = { x: 1, y: 0 };
+        fila = [];
+        pontos = 0;
+        comidas = 0;
+        intervalo = ritmoInicial();
+        espera = 0;
+        acabou = false;
+        aviso = "";
+        deNovo.hidden = true;
+        colocarFruta();
+      }
+
+      function aplicarTecla(tecla, aperta) {
+        if (!aperta) return;
+        if (acabou && tecla === " ") {
+          comecar();
+          return;
+        }
+        if (tecla === "ArrowLeft" || tecla === "a" || tecla === "A") virar(-1, 0);
+        else if (tecla === "ArrowRight" || tecla === "d" || tecla === "D") virar(1, 0);
+        else if (tecla === "ArrowUp" || tecla === "w" || tecla === "W") virar(0, -1);
+        else if (tecla === "ArrowDown" || tecla === "s" || tecla === "S") virar(0, 1);
+      }
+
+      function toque(botao, aoApertar) {
+        botao.addEventListener("pointerdown", function (evento) {
+          if (evento.cancelable) evento.preventDefault();
+          aoApertar();
+        });
+        botao.addEventListener("touchstart", function (evento) {
+          if (evento.cancelable) evento.preventDefault();
+        }, { passive: false });
+      }
+
+      toque(document.getElementById("esquerda"), function () { virar(-1, 0); });
+      toque(document.getElementById("direita"), function () { virar(1, 0); });
+      toque(document.getElementById("cima"), function () { virar(0, -1); });
+      toque(document.getElementById("baixo"), function () { virar(0, 1); });
+      deNovo.addEventListener("click", comecar);
+
+      window.addEventListener("keydown", function (evento) {
+        var tecla = evento.key;
+        if (tecla === "ArrowLeft" || tecla === "ArrowRight" || tecla === "ArrowUp" || tecla === "ArrowDown" || tecla === " ") {
+          evento.preventDefault();
+        }
+        if (evento.repeat) return;
+        aplicarTecla(tecla, true);
+      });
+
+      window.addEventListener("message", function (evento) {
+        var dados = evento.data;
+        if (!dados || dados.tipo !== "zuplay-tecla") return;
+        aplicarTecla(dados.tecla, dados.aperta);
+      });
+
+      document.addEventListener("contextmenu", function (evento) {
+        evento.preventDefault();
+      });
+
+      document.addEventListener("selectstart", function (evento) {
+        evento.preventDefault();
+      });
+
+      var ultimo = 0;
+      function quadro(agora) {
+        var dt = Math.min(0.033, ultimo ? (agora - ultimo) / 1000 : 0.016);
+        ultimo = agora;
+        atualizar(dt);
+        desenhar();
+        requestAnimationFrame(quadro);
+      }
+
+      comecar();
+      requestAnimationFrame(quadro);
+    </script>
+  </body>
+</html>

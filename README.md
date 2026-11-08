@@ -6,7 +6,7 @@ Cada jogo entra numa página do próprio site, com texto, capa e anúncio. O jog
 
 ## Estado
 
-Fase 4 concluída em 12 de outubro de 2026. Jogos jogáveis: [Corrida do Bosque](/jogos/corrida-do-bosque/), [Jogo da Velha](/jogos/jogo-da-velha/), [Jogo da Forca](/jogos/jogo-da-forca/), [Chão Mentiroso](/jogos/chao-mentiroso/) e [Pilha Veloz](/jogos/pilha-veloz/). A pré-visualização dos componentes fica em `/preview/`.
+Fase 4 concluída em 12 de outubro de 2026. Jogos jogáveis: [Corrida do Bosque](/jogos/corrida-do-bosque/), [Jogo da Velha](/jogos/jogo-da-velha/), [Jogo da Forca](/jogos/jogo-da-forca/), [Chão Mentiroso](/jogos/chao-mentiroso/), [Pilha Veloz](/jogos/pilha-veloz/) e [Cobra no Pomar](/jogos/cobra-no-pomar/). A pré-visualização dos componentes fica em `/preview/`.
 
 Código em [github.com/diegowalhernandes/zuplay](https://github.com/diegowalhernandes/zuplay). Andamento em [docs/PROGRESSO.md](docs/PROGRESSO.md). Regras permanentes: [AGENTS.md](AGENTS.md).
 
